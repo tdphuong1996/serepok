@@ -81,23 +81,16 @@ class MySpace {
 /// COLORS DATA
 class MyColor {
   /// Common Colors
-  static const PRIMARY_COLOR = Color(0xFF250048);
+  static const PRIMARY_COLOR = Color(0xFF5ea000);
   static const MISTY_COLOR = Color(0xFFE0E0E0);
-  static const Color LIGHT_BACKGROUND_COLOR = Color(0xFFF9F9F9);
-  static const ACCENT_COLOR = Color(0xFF9B51E0);
-  static const PRIMARY_VARIANT = Color(0xFF9B51E0);
+  static const LIGHT_BACKGROUND_COLOR = Color(0xFFFFFFFF);
+  static const ACCENT_COLOR = Color(0xFF5ea000);
+  static const PRIMARY_VARIANT = Color(0xFF5ea000);
   static const PRIMARY_VARIANT_LIGHT = Color(0xFFE8F5E9);
-  static const PRIMARY_SWATCH = Color(0xFF3681EC);
+  static const PRIMARY_SWATCH = Color(0xFF5ea000);
 
   static const ICON_COLOR = Colors.white;
   static const TEXT_COLOR = Color(0xFF000000);
   static const BUTTON_COLOR = PRIMARY_COLOR;
   static const TEXT_BUTTON_COLOR = Colors.white;
-
-  static const PRIMARY_DARK_COLOR = Color(0xFF250048);
-  static const Color DARK_BACKGROUND_COLOR = Color(0xFF000000);
-  static const ICON_COLOR_DARK = Colors.white;
-  static const TEXT_COLOR_DARK = Color(0xFFffffff);
-  static const BUTTON_COLOR_DARK = PRIMARY_DARK_COLOR;
-  static const TEXT_BUTTON_COLOR_DARK = Colors.black;
 }
