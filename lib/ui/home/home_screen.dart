@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: SizedBox(
                   height: double.infinity,
                   width: double.infinity,
-                  child: Image.asset(Images.imgBackground,fit: BoxFit.contain),
+                  child: Image.asset(Images.imgBackground, fit: BoxFit.contain),
                 )),
             Align(
                 alignment: Alignment.topCenter,
@@ -130,33 +130,37 @@ class _MyHomePageState extends State<MyHomePage> {
             childAspectRatio: 5 / 4,
             crossAxisSpacing: 20,
             children: <Widget>[
-              itemMenu("ĐIỀU HÀNH", () => {
-                Navigator.pushNamed(context, Routes.DIEU_HANH_SCREEN)
-              }),
-              itemMenu("BÁN HÀNG", () => {}),
-              itemMenu("VẬN CHUYỂN", () => {}),
-              itemMenu("KẾ TOÁN", () => {}),
-              itemMenu("KỸ THUẬT", () => {}),
-              itemMenu("HỖ TRỢ", () => {}),
-              itemMenu("COMMON", () => {
-                Navigator.pushNamed(context, Routes.COMMON_SCREEN)
-
-              }),
+              itemMenu(
+                  "ĐIỀU HÀNH",
+                  Images.ic_dieu_hanh,
+                  () =>
+                      {Navigator.pushNamed(context, Routes.DIEU_HANH_SCREEN)}),
+              itemMenu("BÁN HÀNG", Images.ic_ban_hang, () => {}),
+              itemMenu("VẬN CHUYỂN", Images.ic_van_chuyen, () => {}),
+              itemMenu("KẾ TOÁN", Images.ic_ke_toan, () => {}),
+              itemMenu("KỸ THUẬT", Images.ic_ky_thua, () => {}),
+              itemMenu("HỖ TRỢ", Images.ic_ho_tro, () => {}),
+              itemMenu("COMMON", Images.ic_ho_tro,
+                  () => {Navigator.pushNamed(context, Routes.COMMON_SCREEN)}),
             ]),
       ],
     );
   }
 
-  Widget itemMenu(String title, Function onClick) {
+  Widget itemMenu(String title, String icon, Function onClick) {
     return InkWell(
       child: Column(
         children: [
-          Container(
-            height: 60,
-            width: 60,
-            color: Colors.yellow,
+          ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            child: Container(
+              height: 60,
+              width: 60,
+              color: Colors.yellow,
+              child: Image.asset(icon),
+            ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Text(title)
