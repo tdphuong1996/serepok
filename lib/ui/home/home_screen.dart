@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:serepok/res/AppThemes.dart';
 
+import '../../res/images.dart';
 import '../../routes.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -12,12 +13,36 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final int _numPages = 3;
+  final PageController _pageController = PageController(initialPage: 0);
+  int _currentPage = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  List<Widget> _buildPageIndicatorStatic() {
+    List<Widget> list = [];
+    for (int i = 0; i < _numPages; i++) {
+      list.add(i == _currentPage ? _indicator(true) : _indicator(false));
+    }
+    return list;
+  }
+
+  Widget _indicator(bool isActive) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInToLinear,
+      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      height: 8.0,
+      width: 8,
+      decoration: BoxDecoration(
+        color: isActive ? Colors.white : Colors.white.withAlpha(140),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
   }
 
   @override
@@ -29,45 +54,115 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Stack(
           children: [
             Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: Image.asset(Images.imgBackground,fit: BoxFit.contain),
+                )),
+            Align(
                 alignment: Alignment.topCenter,
                 child: Column(
                   children: [slide(), menuMain()],
-                )),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 300,
-                  width: double.infinity,
-                  color: Colors.greenAccent,
-                  child: Text("Box I"),
                 )),
           ],
         ));
   }
 
   Widget slide() {
-    return Container(
-      height: 200,
-      width: double.infinity,
-      child: Text("Slide"),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height * 0.18,
+            child: PageView(
+              pageSnapping: true,
+              physics: ClampingScrollPhysics(),
+              controller: _pageController,
+              onPageChanged: (int page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              children: <Widget>[
+                Padding(
+                    padding: const EdgeInsets.only(right: 0),
+                    child: Container(
+                      color: Colors.red,
+                    )),
+                Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Container(
+                      color: Colors.yellow,
+                    )),
+                Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Container(
+                      color: Colors.black,
+                    )),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: _buildPageIndicatorStatic(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget menuMain() {
-    return Container(
-      height: 100,
-      color: MyColor.ACCENT_COLOR,
-      width: double.infinity,
+    return ListView(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      children: [
+        GridView.count(
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            crossAxisCount: 3,
+            mainAxisSpacing: 20,
+            childAspectRatio: 5 / 4,
+            crossAxisSpacing: 20,
+            children: <Widget>[
+              itemMenu("ĐIỀU HÀNH", () => {
+                Navigator.pushNamed(context, Routes.DIEU_HANH_SCREEN)
+              }),
+              itemMenu("BÁN HÀNG", () => {}),
+              itemMenu("VẬN CHUYỂN", () => {}),
+              itemMenu("KẾ TOÁN", () => {}),
+              itemMenu("KỸ THUẬT", () => {}),
+              itemMenu("HỖ TRỢ", () => {}),
+              itemMenu("COMMON", () => {
+                Navigator.pushNamed(context, Routes.COMMON_SCREEN)
+
+              }),
+            ]),
+      ],
+    );
+  }
+
+  Widget itemMenu(String title, Function onClick) {
+    return InkWell(
       child: Column(
         children: [
-          InkWell(child: Text("Dieu hanh"),onTap: ()=>{
-            Navigator.of(context).pushNamed(Routes.DIEU_HANH_SCREEN)
-          }),
-          InkWell(child: Text("common"),onTap: ()=>{
-            Navigator.of(context).pushNamed(Routes.COMMON_SCREEN)
-          })
+          Container(
+            height: 60,
+            width: 60,
+            color: Colors.yellow,
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Text(title)
         ],
       ),
+      onTap: () => {onClick()},
     );
   }
 }

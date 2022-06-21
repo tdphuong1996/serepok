@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 class AddEmployeeScreen extends StatefulWidget {
   const AddEmployeeScreen({Key? key}) : super(key: key);
 
@@ -11,8 +11,23 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('thêm nhân viên'),
+      child: Column(
+        children: [
+          textField(),
+          textField(),
+          textField(),
+          textField(),
+        ],
+      ),
+    );
+  }
 
+  Widget textField() {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: "Name",
+      ),
+      controller: TextEditingController(text: "Natalia Dyer"),
     );
   }
 }
