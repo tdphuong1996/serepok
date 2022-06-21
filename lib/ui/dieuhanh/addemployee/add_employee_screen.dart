@@ -10,21 +10,19 @@ class AddEmployeeScreen extends StatefulWidget {
 class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          textField(),
-          textField(),
-          textField(),
-          textField(),
-        ],
-      ),
+    return Column(
+      children: [
+        textField(),
+        textField(),
+        textField(),
+        textField(),
+      ],
     );
   }
 
   Widget textField() {
     return TextFormField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Name",
       ),
       controller: TextEditingController(text: "Natalia Dyer"),
