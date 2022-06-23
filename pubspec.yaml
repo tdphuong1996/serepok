@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   # Icons
   material_design_icons_flutter: 5.0.6595
-  font_awesome_flutter: 10.1.0
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:

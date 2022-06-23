@@ -5,5 +5,6 @@ class Routes {
   static const  COMMON_SCREEN = "COMMON_SCREEN";
   static const  ADD_EMPLOYEE = "ADD_EMPLOYEE";
   static const  ADD_PRODUCT = "ADD_PRODUCT";
+  static const  SALE_SCREEN = "SALE_SCREEN";
 
 }

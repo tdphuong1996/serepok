@@ -38,7 +38,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         viewPrice(),
                         height(),
                         textField("Giá sỉ"),
-
                         height(),
                         textField("Địa lý"),
                         height(),

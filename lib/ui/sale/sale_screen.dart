@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:serepok/res/AppThemes.dart';
-import 'package:serepok/ui/dieuhanh/addemployee/add_employee_screen.dart';
-import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
-import 'package:serepok/ui/dieuhanh/report/report_screen.dart';
+import 'package:serepok/ui/sale/createorder/create_order_screen.dart';
+import 'package:serepok/ui/sale/donchodonchot/don_cho_screen.dart';
 
 import '../../routes.dart';
-import '../../widget/customnavigation/custom_bottom_navigation.dart';
-import 'addemployee/list_employee_screen.dart';
-import 'addproduct/list_product_screen.dart';
 
-class DieuHanhScreen extends StatefulWidget {
-  const DieuHanhScreen({Key? key}) : super(key: key);
+class SaleScreen extends StatefulWidget {
+  const SaleScreen({Key? key}) : super(key: key);
 
   @override
-  State<DieuHanhScreen> createState() => _DieuHanhScreenState();
+  State<SaleScreen> createState() => _SaleScreenState();
 }
 
-class _DieuHanhScreenState extends State<DieuHanhScreen> {
+class _SaleScreenState extends State<SaleScreen> {
   int _selectedIndex = 0;
   static const List<Widget> _listPage = <Widget>[
-    ListEmployeeScreen(),
-    ListProductScreen(),
-    ReportScreen(),
-    ReportScreen(),
+    CreateOrderScreen(),
+    DonChoScreen(),
+    DonChoScreen(),
+    DonChoScreen(),
   ];
 
   @override
@@ -59,7 +55,7 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Điều hành'),
+        title: const Text('Bán hàng'),
         leading: Container(),
         actions: [
           Padding(
@@ -82,16 +78,16 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.users),
-            label: 'Nhân viên',
+            icon: Icon(FontAwesomeIcons.cartPlus),
+            label: 'Tạo đơn hàng',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.boxesStacked),
-            label: 'Sản phẩm',
+            icon: Icon(FontAwesomeIcons.hourglassEnd),
+            label: 'Đơn chờ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.clipboardList),
-            label: 'Báo cáo',
+            icon: Icon(FontAwesomeIcons.dollyBox),
+            label: 'Đơn chốt',
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.house),

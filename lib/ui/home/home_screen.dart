@@ -135,7 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Images.ic_dieu_hanh,
                   () =>
                       {Navigator.pushNamed(context, Routes.DIEU_HANH_SCREEN)}),
-              itemMenu("BÁN HÀNG", Images.ic_ban_hang, () => {}),
+              itemMenu("BÁN HÀNG", Images.ic_ban_hang, () => {
+                Navigator.pushNamed(context, Routes.SALE_SCREEN)
+              }),
               itemMenu("VẬN CHUYỂN", Images.ic_van_chuyen, () => {}),
               itemMenu("KẾ TOÁN", Images.ic_ke_toan, () => {}),
               itemMenu("KỸ THUẬT", Images.ic_ky_thua, () => {}),
