@@ -37,10 +37,18 @@ dependencies:
   # Icons
   material_design_icons_flutter: 5.0.6595
   font_awesome_flutter: ^10.1.0
+  provider: ^6.0.3
+  dio: ^4.0.6
+  json_annotation: ^4.0.1
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.11.1
+  json_serializable: ^6.2.0
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
