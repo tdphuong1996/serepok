@@ -7,7 +7,8 @@ part of 'base_response_model.dart';
 // **************************************************************************
 
 BaseResponseModel<T> _$BaseResponseModelFromJson<T>(
-  Map<String, dynamic> json) =>
+  Map<String, dynamic> json,
+) =>
     BaseResponseModel<T>(
       json['result'] as bool,
       json['message'] as String,
