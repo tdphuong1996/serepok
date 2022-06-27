@@ -6,7 +6,7 @@ part 'user.g.dart';
 class User {
   String name;
   @JsonKey(name: "province_id")
-  String provinceId;
+  int provinceId;
 
 
   User(this.name, this.provinceId);

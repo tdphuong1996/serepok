@@ -22,28 +22,38 @@ class ApiClient {
         error: true,
         compact: true,
         maxWidth: 90));
+    _dio.interceptors.add(InterceptorsWrapper(
+      onResponse: (response, handler) {
+        if (response.statusCode ==200) {
+          return handler.resolve(response);
+        }else {
+          throw Exception("Lõi nè");
+        }
+      },
+    ));
   }
 
-  Future<BaseResponseModel<T>> get<T>(String path,
-      Map<String, dynamic> param) async {
+  Future<BaseResponseModel<T>> get<T>(
+      String path, Map<String, dynamic> param) async {
     final response = await _dio.get(path, queryParameters: param);
     try {
       BaseResponseModel<T> responseModel =
-      BaseResponseModel.fromJson(response.data);
+          BaseResponseModel.fromJson(response.data);
       return responseModel;
     } on Exception catch (e) {
       rethrow;
     }
   }
 
-  Future<BaseResponseModel<T>> post<T>(String path,
-      Map<String, dynamic> param) async {
+  Future<BaseResponseModel<T>> post<T>(
+      String path, Map<String, dynamic> param) async {
     final response = await _dio.post(path, queryParameters: param);
     try {
       BaseResponseModel<T> responseModel =
-      BaseResponseModel.fromJson(response.data);
+          BaseResponseModel.fromJson(response.data);
       return responseModel;
-    } on Exception {
+    } on Exception catch (e) {
+      print(e);
       rethrow;
     }
   }

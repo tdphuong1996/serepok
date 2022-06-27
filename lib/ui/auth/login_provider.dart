@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:serepok/base/base_provider.dart';
 import 'package:serepok/model/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../api/repository/auth_repository.dart';
+import '../../res/constant.dart';
 
 class LoginProvider extends BaseProvider {
   final AuthRepository _authRepository = AuthRepository();
@@ -15,9 +17,14 @@ class LoginProvider extends BaseProvider {
     _authRepository.login<User>(param).then(loginData).onError(handleError);
   }
 
-  FutureOr loginData(User value) {
-    hideLoading();
+  FutureOr loginData(User value) async {
+    await saveDataLogin(value);
     loginCallback?.call(true);
-    print("name ${value.name}");
+    hideLoading();
+  }
+
+  Future<bool> saveDataLogin(User value) async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.setString(Constant.PREF_USER, value.toJson().toString());
   }
 }

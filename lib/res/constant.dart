@@ -16,3 +16,7 @@ class LoadingState extends StateApp {
   LoadingState(this.isLoading) : super._();
   final bool isLoading;
 }
+
+class Constant {
+  static const PREF_USER = "PREF_USER";
+}
