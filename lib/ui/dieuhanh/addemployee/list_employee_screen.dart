@@ -74,4 +74,10 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _staffProvider.dispose();
+    super.dispose();
+  }
 }

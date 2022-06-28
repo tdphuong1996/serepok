@@ -6,7 +6,8 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     try {
-      return User(json["name"], json['token']);
+      return User(
+          json["name"], json.toString().contains('token') ? json['token'] : "");
     } on Exception {
       rethrow;
     }

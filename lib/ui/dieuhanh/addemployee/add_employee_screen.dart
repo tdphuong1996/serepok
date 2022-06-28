@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 
 import '../../../res/AppThemes.dart';
+
+enum Role { SELL, SHIPPER }
 
 class AddEmployeeScreen extends StatefulWidget {
   const AddEmployeeScreen({Key? key}) : super(key: key);
@@ -13,6 +20,27 @@ class AddEmployeeScreen extends StatefulWidget {
 }
 
 class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
+  File? image;
+  final ImagePicker _picker = ImagePicker();
+  Role? _role;
+
+  final TextEditingController _editingNameController = TextEditingController();
+  final TextEditingController _editingPhoneController = TextEditingController();
+  final TextEditingController _editingEmailController = TextEditingController();
+  final TextEditingController _editingPasswordController =
+      TextEditingController();
+  final TextEditingController _editingRePasswordController =
+      TextEditingController();
+  final TextEditingController _editingRoleController = TextEditingController();
+  late StaffProvider _staffProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _staffProvider = Provider.of<StaffProvider>(context, listen: false);
+    _staffProvider.createStaffSuccessCallback = resetData;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +62,13 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                         height(),
                         avatar(),
                         height(),
-                        textField("Họ và tên"),
+                        textField("Họ và tên", _editingNameController),
                         height(),
-                        textField("Số điện thoại"),
-                        textField("Email"),
-                        textField("Mật khẩu"),
-                        textField("Nhập lại mật khẩu"),
+                        textField("Số điện thoại", _editingPhoneController),
+                        textField("Email", _editingEmailController),
+                        textField("Mật khẩu", _editingPasswordController),
+                        textField(
+                            "Nhập lại mật khẩu", _editingRePasswordController),
                         height(),
                         textFieldTap("Phân quyền"),
                         height(),
@@ -47,14 +76,14 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          print("ss");
+                          createStaff();
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(8)),
@@ -70,6 +99,95 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     );
   }
 
+  Future<void> pickAvatar() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        this.image = File(image.path);
+      });
+    }
+  }
+
+  void pickRole() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    const Center(
+                      child: Text(
+                        "Chọn phân quyền",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.grey.shade200,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _role = Role.SELL;
+                        _editingRoleController.text = "Nhân viên bán hàng";
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("Nhân viên bán hàng"),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _role = Role.SHIPPER;
+                        _editingRoleController.text = "Nhân viên giao hàng";
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("Nhân viên giao hàng"),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  void createStaff() {
+    _staffProvider.createStaff(
+        _editingNameController.text,
+        _editingPhoneController.text,
+        _editingEmailController.text,
+        _editingPasswordController.text,
+        _editingRePasswordController.text,
+        _role,
+        image);
+  }
+
+  Widget textFieldTap(String label) {
+    return InkWell(
+      onTap: () => {pickRole()},
+      child: IgnorePointer(
+        child: TextFormField(
+          decoration: InputDecoration(
+              labelText: label,
+              suffixIcon: const Icon(FontAwesomeIcons.angleDown)),
+          controller: _editingRoleController,
+        ),
+      ),
+    );
+  }
+
   Widget height() {
     return const SizedBox(
       height: 16,
@@ -77,29 +195,43 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   }
 
   Widget avatar() {
-    return Container(
-      width: 80,
-      height: 80,
-      color: Colors.red,
-    );
-  }
-
-  Widget textField(String label,) {
-    return TextFormField(
-      decoration: InputDecoration(labelText: label),
-      controller: TextEditingController(text: ""),
-    );
-  }
-
-
-  Widget textFieldTap(String label) {
     return InkWell(
-      child: IgnorePointer(
-        child: TextFormField(
-          decoration: InputDecoration(labelText: label,suffixIcon: Icon(FontAwesomeIcons.angleDown)),
-          controller: TextEditingController(text: ""),
+      onTap: () => {pickAvatar()},
+      child: SizedBox(
+        width: 80,
+        height: 80,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(40)),
+          child: image != null
+              ? Image.file(
+                  image!,
+                  fit: BoxFit.cover,
+                )
+              : Container(
+                  color: Colors.grey.shade200,
+                ),
         ),
       ),
     );
+  }
+
+  Widget textField(String label, TextEditingController controller,
+      {bool isPassword = false}) {
+    return TextFormField(
+      obscureText: isPassword,
+      decoration: InputDecoration(labelText: label),
+      controller: controller,
+    );
+  }
+
+  resetData() {
+    _role = null;
+    image = null;
+    _editingNameController.text = "";
+    _editingPhoneController.text = "";
+    _editingEmailController.text = "";
+    _editingPasswordController.text = "";
+    _editingRePasswordController.text = "";
+    _editingRoleController.text = "";
   }
 }

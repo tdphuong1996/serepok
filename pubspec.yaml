@@ -41,6 +41,9 @@ dependencies:
   flutter_easyloading: ^3.0.5
   shared_preferences: ^2.0.15
   adaptive_dialog: ^1.6.4
+  permission_handler: ^10.0.0
+  image_picker: ^0.8.5+3
+
 
 
 dev_dependencies:
