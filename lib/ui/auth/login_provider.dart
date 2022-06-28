@@ -10,12 +10,12 @@ import '../../res/constant.dart';
 
 class LoginProvider extends BaseProvider {
   final AuthRepository _authRepository = AuthRepository();
-  Function(bool)? loginCallback = null;
+  Function(bool)? loginCallback;
 
   void login(String email, String password) {
     showLoading();
     final param = {'email': email, 'password': password};
-    _authRepository.login<User>(param).then(loginData).onError(handleError);
+    _authRepository.login(param).then(loginData).onError(handleError);
   }
 
   FutureOr loginData(User value) async {

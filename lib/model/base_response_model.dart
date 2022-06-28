@@ -1,25 +1,37 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:math';
+
+import 'package:serepok/model/paging_respone_model.dart';
+import 'package:serepok/model/staff.dart';
 
 import 'user.dart';
 
-part 'base_response_model.g.dart';
-
-@JsonSerializable(genericArgumentFactories: true)
 class BaseResponseModel<T> {
   bool result;
   String message;
-  @JsonKey(fromJson: _dataFromJson)
   T data;
 
-  BaseResponseModel(this.result, this.message, this.data);
+  BaseResponseModel(
+      {required this.result, required this.message, required this.data});
 
-  factory BaseResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$BaseResponseModelFromJson<T>(json);
+  factory BaseResponseModel.fromJson(Map<String, dynamic> json) {
+    try {
+      return BaseResponseModel<T>(
+          result: json["result"] as bool,
+          message: json["message"] as String,
+          data: _dataFromJson(json["data"]));
+    } on Exception catch (e) {
+      print(e.toString());
+      rethrow;
+    }
+  }
 
   static T _dataFromJson<T>(Object json) {
     if (json is Map<String, dynamic>) {
+
       if (T == User) {
         return User.fromJson(json) as T;
+      } else if (T == PagingResponseModel<StaffModel>) {
+        return PagingResponseModel<StaffModel>.fromJson(json) as T;
       }
     }
 

@@ -16,17 +16,21 @@ class ListEmployeeScreen extends StatefulWidget {
 }
 
 class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
+  late StaffProvider _staffProvider;
+
   @override
   void initState() {
     super.initState();
-    final staffProvider = Provider.of<StaffProvider>(context, listen: false);
-    staffProvider.getListStaff();
+    _staffProvider = Provider.of<StaffProvider>(context, listen: false);
+    _staffProvider.context = context;
+    _staffProvider.getListStaff();
   }
+
   @override
   Widget build(BuildContext context) {
     final staffProvider = Provider.of<StaffProvider>(context);
     return ListView.builder(
-      itemCount: staffProvider.listStaff.length,
+      itemCount: _staffProvider.listStaff.length,
       itemBuilder: (context, index) {
         return item(staffProvider.listStaff[index]);
       },
@@ -35,7 +39,8 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
 
   Widget item(StaffModel staffModel) {
     return InkWell(
-      onTap: ()=>{
+      onTap: () =>
+      {
         Navigator.of(context).pushNamed(Routes.ADD_EMPLOYEE)
       },
       child: Padding(
@@ -49,19 +54,20 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
             ),
             Expanded(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text("Tên"),
-                  Text("0324923049302"),
-                ],
-              ),
-            )),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text("Tên"),
+                      Text("0324923049302"),
+                    ],
+                  ),
+                )),
             const SizedBox(
               height: 60,
               width: 30,
-              child: Icon(FontAwesomeIcons.ellipsisVertical,color: Colors.grey),
+              child: Icon(
+                  FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
             ),
           ],
         ),

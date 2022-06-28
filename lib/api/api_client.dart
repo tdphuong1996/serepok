@@ -48,8 +48,8 @@ class ApiClient {
     ));
   }
 
-  Future<BaseResponseModel<T>> get<T>(
-      String path, Map<String, dynamic> param) async {
+  Future<BaseResponseModel<T>> get<T>(String path,
+      {Map<String, dynamic>? param}) async {
     final response = await _dio.get(path, queryParameters: param);
     try {
       BaseResponseModel<T> responseModel =
