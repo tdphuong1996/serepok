@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:serepok/base/base_provider.dart';
 import 'package:serepok/model/user.dart';
@@ -25,6 +26,6 @@ class LoginProvider extends BaseProvider {
 
   Future<bool> saveDataLogin(User value) async {
     final prefs = await SharedPreferences.getInstance();
-    return await prefs.setString(Constant.PREF_USER, value.toJson().toString());
+    return await prefs.setString(Constant.PREF_USER, jsonEncode(value.toJson()));
   }
 }

@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:serepok/model/staff.dart';
 import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 
-import '../../../res/AppThemes.dart';
 import '../../../routes.dart';
 
 class ListEmployeeScreen extends StatefulWidget {

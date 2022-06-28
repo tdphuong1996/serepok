@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/base_response_model.dart';
+import '../res/constant.dart';
 import 'pretty_dio_logger.dart';
 
 class ApiClient {
@@ -8,13 +12,11 @@ class ApiClient {
   final _baseUrl = 'https://saurieng.vexe.vn/api/';
 
   ApiClient() {
-
     BaseOptions options = BaseOptions(
       baseUrl: _baseUrl,
       connectTimeout: 3000,
       receiveTimeout: 3000,
     );
-    options.headers["Authorization"] = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvc2F1cmllbmcudmV4ZS52blwvYXBpXC9hdXRoXC9tYW5hZ2VyXC9sb2dpbiIsImlhdCI6MTY1NjMyNzg3MywiZXhwIjoxNjU2MzMxNDczLCJuYmYiOjE2NTYzMjc4NzMsImp0aSI6IlM0T01BbHZNTFVyTXRjZDUiLCJzdWIiOjEsInBydiI6IjJjMTA2MTYyYTllNmVkOGI2NDk3ZmViNzc4ZTNlMDA3NzM0Zjk4YjQifQ.yrrQNpQmVfIssL6ZuF6XgWe-1On8oiYU1qFRVNkDQH0}";
     _dio.options = options;
     _dio.interceptors.add(PrettyDioLogger(
         requestHeader: false,
@@ -25,10 +27,21 @@ class ApiClient {
         compact: true,
         maxWidth: 90));
     _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final prefs = await SharedPreferences.getInstance();
+        String token = "";
+        if (prefs.getString(Constant.PREF_USER) != null) {
+          final Map<String, dynamic> map =
+              json.decode(prefs.getString(Constant.PREF_USER)!);
+          token = map["token"];
+        }
+        options.headers["Authorization"] = "Bearer $token";
+        return handler.next(options);
+      },
       onResponse: (response, handler) {
-        if (response.statusCode ==200) {
+        if (response.statusCode == 200) {
           return handler.resolve(response);
-        }else {
+        } else {
           throw Exception("Lõi nè");
         }
       },
@@ -55,7 +68,6 @@ class ApiClient {
           BaseResponseModel.fromJson(response.data);
       return responseModel;
     } on Exception catch (e) {
-      print(e);
       rethrow;
     }
   }

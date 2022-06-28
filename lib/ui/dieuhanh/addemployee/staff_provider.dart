@@ -8,14 +8,15 @@ class StaffProvider extends BaseProvider {
   final StaffRepository _staffRepository = StaffRepository();
   List<StaffModel> listStaff = [];
 
-  void getListStaff() async {
+  void getListStaff()  {
     showLoading();
     _staffRepository.getListStaff<StaffListResponse>().then(handleDataList).onError(handleError);
-    notifyListeners();
   }
 
   FutureOr handleDataList(StaffListResponse value) async {
     listStaff.addAll(value.data);
+    notifyListeners();
+
     hideLoading();
   }
 }
