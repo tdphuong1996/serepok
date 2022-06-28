@@ -71,4 +71,16 @@ class ApiClient {
       rethrow;
     }
   }
+
+  Future<BaseResponseModel<T>> postFormData<T>(
+      String path, FormData formData) async {
+    final response = await _dio.post(path, data: formData);
+    try {
+      BaseResponseModel<T> responseModel =
+          BaseResponseModel.fromJson(response.data);
+      return responseModel;
+    } on Exception catch (e) {
+      rethrow;
+    }
+  }
 }
