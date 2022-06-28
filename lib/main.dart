@@ -7,6 +7,7 @@ import 'package:serepok/routes.dart';
 import 'package:serepok/ui/auth/login_provider.dart';
 import 'package:serepok/ui/auth/login_screen.dart';
 import 'package:serepok/ui/dieuhanh/addemployee/add_employee_screen.dart';
+import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
 import 'package:serepok/ui/home/common_widget_screen.dart';
 import 'package:serepok/ui/sale/sale_screen.dart';
@@ -20,6 +21,9 @@ void main() {
     MultiProvider(providers: [
       ChangeNotifierProvider(
         create: (_) => LoginProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => StaffProvider(),
       ),
     ], child: const MyApp()),
   );
