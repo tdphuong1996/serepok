@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: SizedBox(
                   height: double.infinity,
                   width: double.infinity,
-                  child: Image.asset(Images.imgBackground, fit: BoxFit.contain),
+                  child: Image.asset(Images.imgBackground, fit: BoxFit.cover),
                 )),
             Align(
                 alignment: Alignment.topCenter,
