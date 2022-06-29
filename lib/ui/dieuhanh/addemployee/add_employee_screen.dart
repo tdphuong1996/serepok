@@ -30,10 +30,11 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   final TextEditingController _editingPhoneController = TextEditingController();
   final TextEditingController _editingEmailController = TextEditingController();
   final TextEditingController _editingPasswordController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _editingRePasswordController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _editingRoleController = TextEditingController();
+
   late StaffProvider _staffProvider;
 
   @override
@@ -45,11 +46,14 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final staffModel = ModalRoute.of(context)!.settings.arguments as StaffModel;
-
+    final staffModel = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as StaffModel?;
+    setupDefaultData(staffModel);
     return Scaffold(
       appBar: AppBar(
-        title: staffModel.id != 0
+        title: staffModel != null
             ? const Text('Chỉnh sửa nhân viên')
             : const Text('Tạo nhân viên'),
       ),
@@ -63,7 +67,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                      child: staffModel.id != 0 ? viewUpdate(staffModel) : viewCreate()),
+                      child: staffModel != null
+                          ? viewUpdate()
+                          : viewCreate()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -72,18 +78,18 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          staffModel.id == 0
+                          staffModel == null
                               ? createStaff()
                               : image != null
-                                  ? updateStaffWithImage(staffModel)
-                                  : updateStaffNoImage(staffModel);
+                              ? updateStaffWithImage(staffModel)
+                              : updateStaffNoImage(staffModel);
                         },
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
+                        const BorderRadius.all(Radius.circular(8)),
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: staffModel.id != 0
+                        child: staffModel != null
                             ? const Text('Cập nhật nhân viên')
                             : const Text('Tạo nhân viên')),
                   ),
@@ -207,8 +213,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     );
   }
 
-  Widget viewUpdate(StaffModel staffModel) {
-    setupDefaultData(staffModel);
+  Widget viewUpdate() {
     return Column(
       children: [
         height(),
@@ -254,17 +259,17 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
           borderRadius: const BorderRadius.all(Radius.circular(40)),
           child: image != null
               ? Image.file(
-                  image!,
-                  fit: BoxFit.cover,
-                )
+            image!,
+            fit: BoxFit.cover,
+          )
               : imageUrl != null
-                  ? Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      color: Colors.grey.shade200,
-                    ),
+              ? Image.network(
+            imageUrl!,
+            fit: BoxFit.cover,
+          )
+              : Container(
+            color: Colors.grey.shade200,
+          ),
         ),
       ),
     );
@@ -290,14 +295,15 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     _editingRoleController.text = "";
   }
 
-  setupDefaultData(StaffModel staffModel) {
-    if (staffModel.id != 0) {
-      _role = null;
+  setupDefaultData(StaffModel? staffModel) {
+    if (staffModel != null) {
+      _role = staffModel.staffType == 1 ? Role.SELL : Role.SHIPPER;
       imageUrl = staffModel.avatarUrl;
       _editingNameController.text = staffModel.name;
       _editingPhoneController.text = staffModel.phone;
       _editingEmailController.text = staffModel.email;
-      _editingRoleController.text = "";
+      _editingRoleController.text =
+      staffModel.staffType == 1 ? "Nhân viên bán hàng" : "Nhân viên giao hàng";
     }
   }
 }
