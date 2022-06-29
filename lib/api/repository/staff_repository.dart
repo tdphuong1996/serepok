@@ -16,8 +16,13 @@ class StaffRepository {
     return dataResponse.handleData();
   }
 
-  Future<User> createStaff(FormData formData) async {
-    final dataResponse = await _apiClient.postFormData<User>(Api.listStaff, formData);
+  Future<StaffModel> createStaff(FormData formData) async {
+    final dataResponse = await _apiClient.postFormData<StaffModel>(Api.listStaff, formData);
+    return dataResponse.handleData();
+  }
+
+  Future<StaffModel> updateStaff(FormData formData, int staffId) async {
+    final dataResponse = await _apiClient.postFormData<StaffModel>("${Api.updateStaff}/$staffId", formData);
     return dataResponse.handleData();
   }
 }

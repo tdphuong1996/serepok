@@ -73,7 +73,7 @@ class ProductProvider extends BaseProvider {
         .onError(handleError);
   }
 
-  FutureOr createStaffSuccess(User value) {
+  FutureOr createStaffSuccess(StaffModel value) {
     showAlert('Tạo nhân viên thành công');
     createStaffSuccessCallback?.call();
     hideLoading();

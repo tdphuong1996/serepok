@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 
+import '../../../model/staff.dart';
 import '../../../res/AppThemes.dart';
 
 enum Role { SELL, SHIPPER }
@@ -23,6 +24,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   File? image;
   final ImagePicker _picker = ImagePicker();
   Role? _role;
+  String? imageUrl;
 
   final TextEditingController _editingNameController = TextEditingController();
   final TextEditingController _editingPhoneController = TextEditingController();
@@ -43,9 +45,13 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final staffModel = ModalRoute.of(context)!.settings.arguments as StaffModel;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tạo nhân viên'),
+        title: staffModel.id != 0
+            ? const Text('Chỉnh sửa nhân viên')
+            : const Text('Tạo nhân viên'),
       ),
       body: GestureDetector(
         onPanDown: (pd) {
@@ -57,24 +63,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        height(),
-                        avatar(),
-                        height(),
-                        textField("Họ và tên", _editingNameController),
-                        height(),
-                        textField("Số điện thoại", _editingPhoneController),
-                        textField("Email", _editingEmailController),
-                        textField("Mật khẩu", _editingPasswordController),
-                        textField(
-                            "Nhập lại mật khẩu", _editingRePasswordController),
-                        height(),
-                        textFieldTap("Phân quyền"),
-                        height(),
-                      ],
-                    ),
-                  ),
+                      child: staffModel.id != 0 ? viewUpdate(staffModel) : viewCreate()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -83,14 +72,20 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          createStaff();
+                          staffModel.id == 0
+                              ? createStaff()
+                              : image != null
+                                  ? updateStaffWithImage(staffModel)
+                                  : updateStaffNoImage(staffModel);
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(8)),
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: const Text('Tạo nhân viên')),
+                        child: staffModel.id != 0
+                            ? const Text('Cập nhật nhân viên')
+                            : const Text('Tạo nhân viên')),
                   ),
                 )
               ],
@@ -174,6 +169,61 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         image);
   }
 
+  void updateStaffWithImage(StaffModel staffModel) {
+    _staffProvider.updateStaffWithImage(
+        staffModel.id,
+        _editingNameController.text,
+        _editingPhoneController.text,
+        _editingEmailController.text,
+        _role,
+        image);
+  }
+
+  void updateStaffNoImage(StaffModel staffModel) {
+    _staffProvider.updateStaffNoImage(
+        staffModel.id,
+        _editingNameController.text,
+        _editingPhoneController.text,
+        _editingEmailController.text,
+        _role);
+  }
+
+  Widget viewCreate() {
+    return Column(
+      children: [
+        height(),
+        avatar(),
+        height(),
+        textField("Họ và tên", _editingNameController),
+        height(),
+        textField("Số điện thoại", _editingPhoneController),
+        textField("Email", _editingEmailController),
+        textField("Mật khẩu", _editingPasswordController),
+        textField("Nhập lại mật khẩu", _editingRePasswordController),
+        height(),
+        textFieldTap("Phân quyền"),
+        height(),
+      ],
+    );
+  }
+
+  Widget viewUpdate(StaffModel staffModel) {
+    setupDefaultData(staffModel);
+    return Column(
+      children: [
+        height(),
+        avatar(),
+        height(),
+        textField("Họ và tên", _editingNameController),
+        height(),
+        textField("Số điện thoại", _editingPhoneController),
+        textField("Email", _editingEmailController),
+        textFieldTap("Phân quyền"),
+        height(),
+      ],
+    );
+  }
+
   Widget textFieldTap(String label) {
     return InkWell(
       onTap: () => {pickRole()},
@@ -207,9 +257,14 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                   image!,
                   fit: BoxFit.cover,
                 )
-              : Container(
-                  color: Colors.grey.shade200,
-                ),
+              : imageUrl != null
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      color: Colors.grey.shade200,
+                    ),
         ),
       ),
     );
@@ -233,5 +288,16 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     _editingPasswordController.text = "";
     _editingRePasswordController.text = "";
     _editingRoleController.text = "";
+  }
+
+  setupDefaultData(StaffModel staffModel) {
+    if (staffModel.id != 0) {
+      _role = null;
+      imageUrl = staffModel.avatarUrl;
+      _editingNameController.text = staffModel.name;
+      _editingPhoneController.text = staffModel.phone;
+      _editingEmailController.text = staffModel.email;
+      _editingRoleController.text = "";
+    }
   }
 }

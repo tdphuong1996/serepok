@@ -39,35 +39,34 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
 
   Widget item(StaffModel staffModel) {
     return InkWell(
-      onTap: () =>
-      {
-        Navigator.of(context).pushNamed(Routes.ADD_EMPLOYEE)
+      onTap: () => {
+        Navigator.of(context)
+            .pushNamed(Routes.ADD_EMPLOYEE, arguments: staffModel)
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Row(
           children: [
-            Container(
-              height: 60,
-              width: 60,
-              color: Colors.red,
-            ),
+            SizedBox(
+                height: 60,
+                width: 60,
+                child: Image.network(staffModel.avatarUrl)),
             Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("Tên"),
-                      Text("0324923049302"),
-                    ],
-                  ),
-                )),
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(staffModel.name),
+                  Text(staffModel.phone),
+                ],
+              ),
+            )),
             const SizedBox(
               height: 60,
               width: 30,
-              child: Icon(
-                  FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
+              child:
+                  Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
             ),
           ],
         ),

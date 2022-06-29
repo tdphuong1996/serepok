@@ -20,10 +20,10 @@ class BaseProvider with ChangeNotifier {
         final response = error.response?.data as Map<String, dynamic>;
         message = response["message"] as String;
       } else {
-        message = "Có lỗi trong quán trình xử lý, Vui lòng thử lại!";
+        message = "Có lỗi trong quá trình xử lý, Vui lòng thử lại!";
       }
     } else {
-      message = "Có lỗi trong quán trình xử lý, Vui lòng thử lại!";
+      message = "Có lỗi trong quá trình xử lý, Vui lòng thử lại!";
     }
     hideLoading();
     showAlert(message);

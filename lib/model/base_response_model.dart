@@ -32,6 +32,8 @@ class BaseResponseModel<T> {
         return User.fromJson(json) as T;
       } else if (T == PagingResponseModel<StaffModel>) {
         return PagingResponseModel<StaffModel>.fromJson(json) as T;
+      } else if (T == StaffModel) {
+        return StaffModel.fromJson(json) as T;
       }
     }
 

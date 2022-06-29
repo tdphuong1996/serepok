@@ -5,6 +5,7 @@ import 'package:serepok/ui/dieuhanh/addemployee/add_employee_screen.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
 import 'package:serepok/ui/dieuhanh/report/report_screen.dart';
 
+import '../../model/staff.dart';
 import '../../routes.dart';
 import '../../widget/customnavigation/custom_bottom_navigation.dart';
 import 'addemployee/list_employee_screen.dart';
@@ -49,7 +50,8 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
   void _add() {
 
     if (_selectedIndex==0) {
-      Navigator.of(context).pushNamed(Routes.ADD_EMPLOYEE);
+      Navigator.of(context)
+          .pushNamed(Routes.ADD_EMPLOYEE, arguments: StaffModel(id: 0, name: "", email: "", phone: "", avatarUrl: "", staffType: 0));
     }else if (_selectedIndex == 1) {
       Navigator.of(context).pushNamed(Routes.ADD_PRODUCT);
     }
