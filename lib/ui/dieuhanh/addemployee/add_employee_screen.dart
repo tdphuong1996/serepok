@@ -45,6 +45,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     super.initState();
     _staffProvider = Provider.of<StaffProvider>(context, listen: false);
     _staffProvider.createStaffSuccessCallback = resetData;
+    setupDefaultData();
   }
 
   @override
