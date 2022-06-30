@@ -45,6 +45,10 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Ứng dụng truy cập hình ảnh của bạn</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Ứng dụng truy cập camera của bạn</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>GoogleSans-Regular.ttf</string>

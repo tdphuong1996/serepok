@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:serepok/model/paging_respone_model.dart';
 import 'package:serepok/model/staff.dart';
 
+import 'product_model.dart';
 import 'user.dart';
 
 class BaseResponseModel<T> {
@@ -34,6 +35,8 @@ class BaseResponseModel<T> {
         return PagingResponseModel<StaffModel>.fromJson(json) as T;
       } else if (T == StaffModel) {
         return StaffModel.fromJson(json) as T;
+      }else if (T == ProductModel) {
+        return ProductModel.fromJson(json) as T;
       }
     }
 

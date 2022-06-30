@@ -28,11 +28,10 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final staffProvider = Provider.of<StaffProvider>(context);
     return ListView.builder(
       itemCount: _staffProvider.listStaff.length,
       itemBuilder: (context, index) {
-        return item(staffProvider.listStaff[index]);
+        return item(_staffProvider.listStaff[index]);
       },
     );
   }
