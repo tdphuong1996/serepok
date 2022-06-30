@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:serepok/model/staff.dart';
 import 'package:serepok/res/AppThemes.dart';
 import 'package:serepok/res/constant.dart';
 import 'package:serepok/routes.dart';
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
               Routes.HOME_SCREEN: (context) => const MyHomePage(title: ""),
               Routes.DIEU_HANH_SCREEN: (context) => const DieuHanhScreen(),
               Routes.LOGIN_SCREEN: (context) => const LoginScreen(),
-              Routes.ADD_EMPLOYEE: (context) => const AddEmployeeScreen(),
+              Routes.ADD_EMPLOYEE: (context) =>  AddEmployeeScreen(ModalRoute.of(context)!.settings.arguments as StaffModel),
               Routes.SALE_SCREEN: (context) => const SaleScreen(),
               Routes.ADD_PRODUCT: (context) => const AddProductScreen(),
               Routes.COMMON_SCREEN: (context) =>

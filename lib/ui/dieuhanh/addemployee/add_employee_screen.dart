@@ -14,7 +14,10 @@ import '../../../res/AppThemes.dart';
 enum Role { SELL, SHIPPER }
 
 class AddEmployeeScreen extends StatefulWidget {
-  const AddEmployeeScreen({Key? key}) : super(key: key);
+  StaffModel? _staffModel;
+
+
+  AddEmployeeScreen(this._staffModel, {Key? key}) : super(key: key);
 
   @override
   State<AddEmployeeScreen> createState() => _AddEmployeeScreenState();
@@ -30,9 +33,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   final TextEditingController _editingPhoneController = TextEditingController();
   final TextEditingController _editingEmailController = TextEditingController();
   final TextEditingController _editingPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editingRePasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editingRoleController = TextEditingController();
 
   late StaffProvider _staffProvider;
@@ -46,14 +49,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final staffModel = ModalRoute
-        .of(context)!
-        .settings
-        .arguments as StaffModel?;
-    setupDefaultData(staffModel);
     return Scaffold(
       appBar: AppBar(
-        title: staffModel != null
+        title: widget._staffModel != null
             ? const Text('Chỉnh sửa nhân viên')
             : const Text('Tạo nhân viên'),
       ),
@@ -67,9 +65,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                      child: staffModel != null
-                          ? viewUpdate()
-                          : viewCreate()),
+                      child: widget._staffModel != null ? viewUpdate() : viewCreate()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -78,18 +74,18 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          staffModel == null
+                          widget._staffModel == null
                               ? createStaff()
                               : image != null
-                              ? updateStaffWithImage(staffModel)
-                              : updateStaffNoImage(staffModel);
+                                  ? updateStaffWithImage()
+                                  : updateStaffNoImage();
                         },
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(8)),
+                            const BorderRadius.all(Radius.circular(8)),
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: staffModel != null
+                        child: widget._staffModel != null
                             ? const Text('Cập nhật nhân viên')
                             : const Text('Tạo nhân viên')),
                   ),
@@ -175,9 +171,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         image);
   }
 
-  void updateStaffWithImage(StaffModel staffModel) {
+  void updateStaffWithImage() {
     _staffProvider.updateStaffWithImage(
-        staffModel.id,
+        widget._staffModel!.id,
         _editingNameController.text,
         _editingPhoneController.text,
         _editingEmailController.text,
@@ -185,9 +181,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         image);
   }
 
-  void updateStaffNoImage(StaffModel staffModel) {
+  void updateStaffNoImage() {
     _staffProvider.updateStaffNoImage(
-        staffModel.id,
+        widget._staffModel!.id,
         _editingNameController.text,
         _editingPhoneController.text,
         _editingEmailController.text,
@@ -259,17 +255,17 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
           borderRadius: const BorderRadius.all(Radius.circular(40)),
           child: image != null
               ? Image.file(
-            image!,
-            fit: BoxFit.cover,
-          )
+                  image!,
+                  fit: BoxFit.cover,
+                )
               : imageUrl != null
-              ? Image.network(
-            imageUrl!,
-            fit: BoxFit.cover,
-          )
-              : Container(
-            color: Colors.grey.shade200,
-          ),
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      color: Colors.grey.shade200,
+                    ),
         ),
       ),
     );
@@ -295,15 +291,16 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     _editingRoleController.text = "";
   }
 
-  setupDefaultData(StaffModel? staffModel) {
-    if (staffModel != null) {
-      _role = staffModel.staffType == 1 ? Role.SELL : Role.SHIPPER;
-      imageUrl = staffModel.avatarUrl;
-      _editingNameController.text = staffModel.name;
-      _editingPhoneController.text = staffModel.phone;
-      _editingEmailController.text = staffModel.email;
-      _editingRoleController.text =
-      staffModel.staffType == 1 ? "Nhân viên bán hàng" : "Nhân viên giao hàng";
+  setupDefaultData() {
+    if (widget._staffModel != null) {
+      _role = widget._staffModel!.staffType == 1 ? Role.SELL : Role.SHIPPER;
+      imageUrl = widget._staffModel!.avatarUrl;
+      _editingNameController.text = widget._staffModel!.name;
+      _editingPhoneController.text = widget._staffModel!.phone;
+      _editingEmailController.text = widget._staffModel!.email;
+      _editingRoleController.text = widget._staffModel!.staffType == 1
+          ? "Nhân viên bán hàng"
+          : "Nhân viên giao hàng";
     }
   }
 }

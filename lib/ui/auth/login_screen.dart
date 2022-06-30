@@ -27,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _loginProvider.loginCallback = (issss) {
       Navigator.of(context).pushNamed(Routes.HOME_SCREEN);
     };
+    _userNameTextcontroller.text  = 'sauriengsarepok@gmail.com';
+    _passwordTextcontroller.text  = '123456';
   }
 
   @override
