@@ -17,28 +17,98 @@ class ListEmployeeScreen extends StatefulWidget {
 
 class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   late StaffProvider _staffProvider;
+  late ScrollController _controller;
+  List<StaffModel> listStaff = [];
+  bool _isLoadMoreRunning = false;
+  bool _hasNextPage = true;
+  int _currentPage = 1;
+  int _lastPage = 1;
+
+
+  Future _firstLoad() async {
+    setState(() async {
+      await _staffProvider.getListStaff(_currentPage);
+      listStaff = _staffProvider.listStaff;
+      _lastPage = _staffProvider.lastPage;
+    });
+  }
+
+  void _loadMore() async {
+    if (_currentPage < _lastPage) {
+      setState(() {
+        _isLoadMoreRunning = true; // Display a progress indicator at the bottom
+      });
+      _currentPage += 1; // Increase _page by 1
+      if (_staffProvider.listStaff.length <= _staffProvider.total) {
+        await _staffProvider.getListStaff(_currentPage);
+        setState(() {
+          listStaff = _staffProvider.listStaff;
+        });
+      } else {
+        // This means there is no more data
+        // and therefore, we will not send another GET request
+        setState(() {
+          _hasNextPage = false;
+        });
+      }
+      setState(() {
+        _isLoadMoreRunning = false;
+      });
+    }
+  }
+
+  Future _refresh() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    setState(() {
+      listStaff.clear();
+      _currentPage = 1;
+      _firstLoad();
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _staffProvider = Provider.of<StaffProvider>(context, listen: false);
     _staffProvider.context = context;
-    _staffProvider.getListStaff();
+    _controller = ScrollController()
+      ..addListener(_loadMore);
+    _firstLoad();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _staffProvider.listStaff.length,
-      itemBuilder: (context, index) {
-        return item(_staffProvider.listStaff[index]);
-      },
-    );
+    return Consumer<StaffProvider>(builder: (context, value, child) {
+      return Column(
+        children: [
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _refresh,
+              child: ListView.builder(
+                controller: _controller,
+                itemCount: listStaff.length,
+                itemBuilder: (context, index) {
+                  return item(listStaff[index]);
+                },
+              ),
+            ),
+          ),
+          if (_isLoadMoreRunning == true)
+            const Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 40),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ],
+      );
+    });
   }
 
   Widget item(StaffModel staffModel) {
     return InkWell(
-      onTap: () => {
+      onTap: () =>
+      {
         Navigator.of(context)
             .pushNamed(Routes.ADD_EMPLOYEE, arguments: staffModel)
       },
@@ -52,20 +122,20 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                 child: Image.network(staffModel.avatarUrl)),
             Expanded(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(staffModel.name),
-                  Text(staffModel.phone),
-                ],
-              ),
-            )),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(staffModel.name),
+                      Text(staffModel.phone),
+                    ],
+                  ),
+                )),
             const SizedBox(
               height: 60,
               width: 30,
               child:
-                  Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
+              Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
             ),
           ],
         ),
@@ -76,6 +146,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   @override
   void dispose() {
     _staffProvider.dispose();
+    _controller.removeListener(_loadMore);
     super.dispose();
   }
 }

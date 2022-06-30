@@ -10,14 +10,14 @@ import '../../model/paging_respone_model.dart';
 class StaffRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<PagingResponseModel<StaffModel>> getListStaff() async {
+  Future<PagingResponseModel<StaffModel>> getListStaff(int page) async {
     final dataResponse =
-        await _apiClient.get<PagingResponseModel<StaffModel>>(Api.listStaff);
+        await _apiClient.get<PagingResponseModel<StaffModel>>("${Api.listStaff}=$page");
     return dataResponse.handleData();
   }
 
   Future<StaffModel> createStaff(FormData formData) async {
-    final dataResponse = await _apiClient.postFormData<StaffModel>(Api.listStaff, formData);
+    final dataResponse = await _apiClient.postFormData<StaffModel>(Api.createStaff, formData);
     return dataResponse.handleData();
   }
 

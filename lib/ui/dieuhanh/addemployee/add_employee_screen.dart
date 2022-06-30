@@ -52,7 +52,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget._staffModel != null
+        title: widget._staffModel?.id != 0
             ? const Text('Chỉnh sửa nhân viên')
             : const Text('Tạo nhân viên'),
       ),
@@ -66,7 +66,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                      child: widget._staffModel != null ? viewUpdate() : viewCreate()),
+                      child: widget._staffModel?.id != 0 ? viewUpdate() : viewCreate()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -75,18 +75,16 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          widget._staffModel == null
+                          widget._staffModel?.id == 0
                               ? createStaff()
-                              : image != null
-                                  ? updateStaffWithImage()
-                                  : updateStaffNoImage();
+                              : updateStaff();
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(8)),
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: widget._staffModel != null
+                        child: widget._staffModel?.id != 0
                             ? const Text('Cập nhật nhân viên')
                             : const Text('Tạo nhân viên')),
                   ),
@@ -172,23 +170,14 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         image);
   }
 
-  void updateStaffWithImage() {
-    _staffProvider.updateStaffWithImage(
+  void updateStaff() {
+    _staffProvider.updateStaff(
         widget._staffModel!.id,
         _editingNameController.text,
         _editingPhoneController.text,
         _editingEmailController.text,
         _role,
         image);
-  }
-
-  void updateStaffNoImage() {
-    _staffProvider.updateStaffNoImage(
-        widget._staffModel!.id,
-        _editingNameController.text,
-        _editingPhoneController.text,
-        _editingEmailController.text,
-        _role);
   }
 
   Widget viewCreate() {
@@ -293,7 +282,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   }
 
   setupDefaultData() {
-    if (widget._staffModel != null) {
+    if (widget._staffModel?.id != 0) {
       _role = widget._staffModel!.staffType == 1 ? Role.SELL : Role.SHIPPER;
       imageUrl = widget._staffModel!.avatarUrl;
       _editingNameController.text = widget._staffModel!.name;

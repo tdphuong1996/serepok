@@ -13,16 +13,22 @@ import 'add_employee_screen.dart';
 class StaffProvider extends BaseProvider {
   final StaffRepository _staffRepository = StaffRepository();
   List<StaffModel> listStaff = [];
+  int lastPage = 0;
+  int total = 0;
   Function? createStaffSuccessCallback;
   Function? updateStaffSuccessCallback;
 
-  void getListStaff() {
+  Future<void> getListStaff(int page) async {
     showLoading();
-    _staffRepository.getListStaff().then(handleDataList).onError(handleError);
+     await _staffRepository.getListStaff(page)
+        .then(handleDataList)
+        .onError(handleError);
   }
 
   FutureOr handleDataList(PagingResponseModel<StaffModel> data) async {
     listStaff.addAll(data.data);
+    lastPage = data.lastPage;
+    total = data.total;
     notifyListeners();
     hideLoading();
   }
@@ -45,6 +51,13 @@ class StaffProvider extends BaseProvider {
       return;
     }
     showLoading();
+    MultipartFile? avatar;
+    if (image != null) {
+      avatar = await MultipartFile.fromFile(image.path,
+          filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg");
+    }else{
+      avatar = null;
+    }
     var formData = FormData.fromMap({
       'name': name,
       'phone': phone,
@@ -52,8 +65,7 @@ class StaffProvider extends BaseProvider {
       'email': email,
       'password': password,
       'staff_type': role == Role.SELL ? 1 : 2,
-      'avatar': await MultipartFile.fromFile(image!.path,
-          filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg")
+      'avatar': avatar
     });
     _staffRepository
         .createStaff(formData)
@@ -61,7 +73,7 @@ class StaffProvider extends BaseProvider {
         .onError(handleError);
   }
 
-  void updateStaffWithImage(int staffId, String name, String phone,
+  void updateStaff(int staffId, String name, String phone,
       String email, Role? role, File? image) async {
     String message = "";
     if (name.isEmpty || phone.isEmpty || email.isEmpty || role == null) {
@@ -72,6 +84,13 @@ class StaffProvider extends BaseProvider {
       return;
     }
     showLoading();
+    MultipartFile? avatar;
+    if (image != null) {
+      avatar = await MultipartFile.fromFile(image.path,
+          filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg");
+    }else{
+      avatar = null;
+    }
     var formData = FormData.fromMap({
       'name': name,
       'phone': phone,
@@ -80,30 +99,6 @@ class StaffProvider extends BaseProvider {
       'staff_type': role == Role.SELL ? 1 : 2,
       'avatar': await MultipartFile.fromFile(image!.path,
           filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg")
-    });
-    _staffRepository
-        .updateStaff(formData, staffId)
-        .then(updateStaffSuccess)
-        .onError(handleError);
-  }
-
-  void updateStaffNoImage(
-      int staffId, String name, String phone, String email, Role? role) async {
-    String message = "";
-    if (name.isEmpty || phone.isEmpty || email.isEmpty || role == null) {
-      message = "Vui lòng nhập đầy đủ thông tin";
-    }
-    if (message.isNotEmpty) {
-      showAlert(message);
-      return;
-    }
-    showLoading();
-    var formData = FormData.fromMap({
-      'name': name,
-      'phone': phone,
-      'status': 0,
-      'email': email,
-      'staff_type': role == Role.SELL ? 1 : 2
     });
     _staffRepository
         .updateStaff(formData, staffId)
