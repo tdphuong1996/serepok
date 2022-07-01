@@ -19,13 +19,13 @@ class StaffProvider extends BaseProvider {
   Function? updateStaffSuccessCallback;
 
   Future<void> getListStaff() async {
-    if(!isRefresh) { showLoading();}
+    showLoading();
     try {
       final response = await _staffRepository.getListStaff(pageNumber);
       handleDataList(response);
       hideLoading();
     } on Exception catch (error) {
-      hideLoading();
+      handleErrors(error);
     }
   }
 
@@ -36,6 +36,7 @@ class StaffProvider extends BaseProvider {
     }
     listStaff.addAll(data.data);
     lastPage = data.lastPage;
+    isCanLoadMore = pageNumber < lastPage;
     notifyListeners();
     hideLoading();
   }

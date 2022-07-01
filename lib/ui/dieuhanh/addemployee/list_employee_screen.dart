@@ -29,7 +29,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
     _staffProvider.context = context;
     _staffProvider.getListStaff();
     _controller = ScrollController();
-    // ..addListener(_loadMore);
+    _controller.addListener(_loadMore);
   }
 
   @override
@@ -51,9 +51,13 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
           ),
           if (_isLoadMoreRunning == true)
             const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 40),
-              child: Center(
-                child: CircularProgressIndicator(),
+              padding: EdgeInsets.only(top: 10, bottom: 10),
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
         ],
@@ -72,12 +76,12 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
         child: Row(
           children: [
             SizedBox(
-                height: 60,
-                width: 60,
-                child: ClipRRect(
-                 borderRadius: BorderRadius.circular(30),
+              height: 60,
+              width: 60,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
                   child: ImageNetwork(staffModel.avatarUrl)),
-                ),
+            ),
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -104,7 +108,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   @override
   void dispose() {
     _staffProvider.dispose();
-    // _controller.removeListener(_loadMore);
+    _controller.removeListener(_loadMore);
     super.dispose();
   }
 
@@ -112,5 +116,23 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
     _staffProvider.isRefresh = true;
     _staffProvider.pageNumber = 1;
     await _staffProvider.getListStaff();
+  }
+
+  void _loadMore() async {
+    if (_isLoading) return;
+    final thresholdReached = _controller.position.extentAfter < 200;
+    if (thresholdReached  && _staffProvider.isCanLoadMore) {
+      setState(() {
+        _isLoadMoreRunning = true;
+      });
+      _isLoading = true;
+      _staffProvider.isLoadMore = true;
+      _staffProvider.pageNumber++;
+      await _staffProvider.getListStaff();
+      _isLoading = false;
+      setState(() {
+        _isLoadMoreRunning = false;
+      });
+    }
   }
 }

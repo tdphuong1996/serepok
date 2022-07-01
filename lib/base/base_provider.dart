@@ -10,12 +10,18 @@ class BaseProvider with ChangeNotifier {
   BuildContext? context = null;
   int pageNumber = 1;
   bool isRefresh =  false;
+  bool isLoadMore =  false;
+  bool isCanLoadMore =  false;
 
 
   bool isLoading = false;
   String error = "";
 
   FutureOr handleError(Object error, StackTrace stackTrace) {
+    handleErrors(error);
+  }
+
+  void handleErrors(Object error) {
     String message = "";
     if (error is DioError) {
       if (error.response?.data != null) {
@@ -29,9 +35,11 @@ class BaseProvider with ChangeNotifier {
     }
     hideLoading();
     showAlert(message);
+
   }
 
   void showLoading() {
+    if(isRefresh || isLoadMore) return;
     EasyLoading.show(status: 'loading...');
   }
 
