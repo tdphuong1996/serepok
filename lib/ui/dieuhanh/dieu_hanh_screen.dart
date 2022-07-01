@@ -61,6 +61,7 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Điều hành'),
         leading: Container(),
         actions: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:serepok/model/product_model.dart';
 import 'package:serepok/model/staff.dart';
 import 'package:serepok/res/AppThemes.dart';
 import 'package:serepok/res/constant.dart';
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: AppThemes.theme(),
             routes: {
@@ -76,7 +78,7 @@ class MyApp extends StatelessWidget {
               Routes.LOGIN_SCREEN: (context) => const LoginScreen(),
               Routes.ADD_EMPLOYEE: (context) =>  AddEmployeeScreen(ModalRoute.of(context)!.settings.arguments as StaffModel),
               Routes.SALE_SCREEN: (context) => const SaleScreen(),
-              Routes.ADD_PRODUCT: (context) => const AddProductScreen(),
+              Routes.ADD_PRODUCT: (context) =>  AddProductScreen(ModalRoute.of(context)!.settings.arguments as ProductModel?),
               Routes.COMMON_SCREEN: (context) =>
                   const CommonWidgetPage(title: "Common"),
             },

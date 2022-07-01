@@ -11,19 +11,23 @@ import '../../model/product_model.dart';
 class ProductRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<PagingResponseModel<ProductModel>> getListProduct() async {
-    final dataResponse =
-        await _apiClient.get<PagingResponseModel<ProductModel>>(Api.createProduct);
+  Future<PagingResponseModel<ProductModel>> getListProduct(
+      int pageNumber) async {
+    final dataResponse = await _apiClient
+        .get<PagingResponseModel<ProductModel>>(Api.createProduct,
+            param: {'page': pageNumber});
     return dataResponse.handleData();
   }
 
   Future<ProductModel> createProduct(FormData formData) async {
-    final dataResponse = await _apiClient.postFormData<ProductModel>(Api.createProduct, formData);
+    final dataResponse = await _apiClient.postFormData<ProductModel>(
+        Api.createProduct, formData);
     return dataResponse.handleData();
   }
 
-  Future<StaffModel> updateStaff(FormData formData, int staffId) async {
-    final dataResponse = await _apiClient.postFormData<StaffModel>("${Api.updateStaff}/$staffId", formData);
+  Future<ProductModel> updateProduct(FormData formData, int id) async {
+    final dataResponse = await _apiClient.postFormData<ProductModel>(
+        "${Api.updateProduct}/$id", formData);
     return dataResponse.handleData();
   }
 }

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/staff.dart';
 import 'package:serepok/res/view.dart';
@@ -65,12 +64,19 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
     });
   }
 
+  Future<void> itemClick(StaffModel staffModel) async {
+    final result = await Navigator.pushNamed(context, Routes.ADD_EMPLOYEE,
+        arguments: staffModel);
+    if (result != null) {
+      showOkAlertDialog(
+          context: context, message: 'Cập nhật thông tin thành công');
+      _refresh();
+    }
+  }
+
   Widget item(StaffModel staffModel) {
     return InkWell(
-      onTap: () => {
-        Navigator.of(context)
-            .pushNamed(Routes.ADD_EMPLOYEE, arguments: staffModel)
-      },
+      onTap: () => {itemClick(staffModel)},
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Row(
@@ -93,12 +99,6 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
                 ],
               ),
             )),
-            const SizedBox(
-              height: 60,
-              width: 30,
-              child:
-                  Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
-            ),
           ],
         ),
       ),
@@ -121,7 +121,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   void _loadMore() async {
     if (_isLoading) return;
     final thresholdReached = _controller.position.extentAfter < 200;
-    if (thresholdReached  && _staffProvider.isCanLoadMore) {
+    if (thresholdReached && _staffProvider.isCanLoadMore) {
       setState(() {
         _isLoadMoreRunning = true;
       });

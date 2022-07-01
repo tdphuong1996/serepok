@@ -10,12 +10,12 @@ import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 
 import '../../../model/staff.dart';
 import '../../../res/AppThemes.dart';
+import '../../../res/view.dart';
 
 enum Role { SELL, SHIPPER }
 
 class AddEmployeeScreen extends StatefulWidget {
   StaffModel? _staffModel;
-
 
   AddEmployeeScreen(this._staffModel, {Key? key}) : super(key: key);
 
@@ -45,6 +45,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     super.initState();
     _staffProvider = Provider.of<StaffProvider>(context, listen: false);
     _staffProvider.createStaffSuccessCallback = resetData;
+    _staffProvider.updateStaffSuccessCallback = () {
+      Navigator.pop(context, "update_success");
+    };
     setupDefaultData();
   }
 
@@ -66,7 +69,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                      child: widget._staffModel?.id != 0 ? viewUpdate() : viewCreate()),
+                      child: widget._staffModel?.id != 0
+                          ? viewUpdate()
+                          : viewCreate()),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -249,10 +254,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                   fit: BoxFit.cover,
                 )
               : imageUrl != null
-                  ? Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                    )
+                  ? ImageNetwork(imageUrl!)
                   : Container(
                       color: Colors.grey.shade200,
                     ),

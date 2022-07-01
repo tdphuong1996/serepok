@@ -2,16 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/product_model.dart';
+import 'package:serepok/res/formater.dart';
+import 'package:serepok/res/view.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_provider.dart';
 
 import '../../../res/AppThemes.dart';
+import '../../../res/constant.dart';
 
 class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({Key? key}) : super(key: key);
+  ProductModel? _product;
+
+  AddProductScreen(this._product, {Key? key}) : super(key: key);
 
   @override
   State<AddProductScreen> createState() => _AddProductScreenState();
@@ -40,6 +47,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final ImagePicker _picker = ImagePicker();
 
   File? image;
+  TypeAction _typeAction = TypeAction.ADD;
 
   @override
   void initState() {
@@ -47,13 +55,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
     _productProvider.context = context;
     _productProvider.createProductSuccessCallback = resetData;
+    _productProvider.updateProductSuccessCallback = () {
+      Navigator.pop(context, "update_success");
+    };
+    _typeAction = widget._product != null ? TypeAction.EDIT : TypeAction.ADD;
+    if (_typeAction == TypeAction.EDIT) {
+      setDefaultData();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tạo sản phấm'),
+        title: Text(_typeAction == TypeAction.ADD
+            ? 'Tạo sản phấm'
+            : 'Cật nhật sản phẩm'),
       ),
       body: GestureDetector(
         onPanDown: (pd) {
@@ -90,9 +107,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         height(),
                         viewPrice(),
                         height(),
-                        textField("Giá sỉ", _editingCostProductController),
+                        textField("Giá sỉ", _editingCostProductController,
+                            isNumber: true),
                         height(),
-                        textField("Địa lý", _editingAreaProductController),
+                        textField(
+                          "Địa lý",
+                          _editingAreaProductController,
+                        ),
                         height(),
                         height(),
                       ],
@@ -113,7 +134,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: const Text('Tạo sản phẩm')),
+                        child: Text(_typeAction == TypeAction.ADD
+                            ? 'Tạo sản phẩm'
+                            : 'Cập nhập sản phẩm')),
                   ),
                 )
               ],
@@ -146,27 +169,63 @@ class _AddProductScreenState extends State<AddProductScreen> {
     String name = _editingNameProductController.text;
     String description = _editingDesProductController.text;
     String species = _editingTypeProductController.text;
-    String price = _editingPriceProductController.text;
-    String cost = _editingCostProductController.text;
+    String price = _editingPriceProductController.text.replaceAll(",", "");
+    String cost = _editingCostProductController.text.replaceAll(",", "");
     String unit = _editingUnitProductController.text;
     String location = _editingAreaProductController.text;
     String code = _editingCodeProductController.text;
     String gardenName = _editingGardenNameController.text;
-    if (name.isEmpty ||
-        description.isEmpty ||
-        gardenName.isEmpty ||
-        code.isEmpty ||
-        species.isEmpty ||
-        price.isEmpty ||
-        cost.isEmpty ||
-        location.isEmpty ||
-        image == null ||
-        unit.isEmpty) {
-      _productProvider.showAlert('Vui lòng nhập đầy đủ thông tin');
-      return;
+
+    switch (_typeAction) {
+      case TypeAction.EDIT:
+        if (name.isEmpty ||
+            description.isEmpty ||
+            gardenName.isEmpty ||
+            code.isEmpty ||
+            species.isEmpty ||
+            price.isEmpty ||
+            cost.isEmpty ||
+            location.isEmpty ||
+            unit.isEmpty) {
+          _productProvider.showAlert('Vui lòng nhập đầy đủ thông tin');
+          return;
+        }
+        _productProvider.updateProduct(name, description, species, price, cost,
+            unit, location, gardenName, code, image, widget._product!.id);
+        break;
+      case TypeAction.ADD:
+        if (name.isEmpty ||
+            description.isEmpty ||
+            gardenName.isEmpty ||
+            code.isEmpty ||
+            species.isEmpty ||
+            price.isEmpty ||
+            cost.isEmpty ||
+            location.isEmpty ||
+            image == null ||
+            unit.isEmpty) {
+          _productProvider.showAlert('Vui lòng nhập đầy đủ thông tin');
+          return;
+        }
+        _productProvider.createProduct(name, description, species, price, cost,
+            unit, location, gardenName, code, image);
+        break;
     }
-    _productProvider.createProduct(name, description, species, price, cost,
-        unit, location, gardenName, code, image);
+  }
+
+  void setDefaultData() {
+    final product = widget._product!;
+    _editingNameProductController.text = product.name;
+    _editingDesProductController.text = product.description;
+    _editingTypeProductController.text = product.species;
+    _editingPriceProductController.text =
+        NumberFormat("#,###,###", "en_US").format(product.price);
+    _editingCostProductController.text =
+        NumberFormat("#,###,###", "en_US").format(product.cost);
+    _editingUnitProductController.text = product.unit;
+    _editingCodeProductController.text = product.code;
+    _editingAreaProductController.text = product.location;
+    _editingGardenNameController.text = product.gardenName;
   }
 
   Future<void> pickAvatar() async {
@@ -183,8 +242,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
       children: [
         Expanded(
             flex: 4,
-            child: textField("Giá bán", _editingPriceProductController)),
-        SizedBox(
+            child: textField("Giá bán", _editingPriceProductController,
+                isNumber: true)),
+        const SizedBox(
           width: 16,
         ),
         Expanded(
@@ -200,11 +260,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
         width: 100,
         height: 100,
         child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
           child: image != null
               ? Image.file(image!, fit: BoxFit.cover)
-              : Container(
-                  color: Colors.grey.shade200,
-                ),
+              : ImageNetwork(widget._product?.imageUrl ?? ''),
         ),
       ),
     );
@@ -217,12 +276,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Widget textField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return TextFormField(
-      keyboardType: keyboardType,
-      decoration: InputDecoration(labelText: label),
-      controller: controller,
-    );
+      {TextInputType keyboardType = TextInputType.text,
+      bool isNumber = false}) {
+    if (isNumber) {
+      return TextFormField(
+        inputFormatters: [ThousandsFormatter(allowFraction: true)],
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(labelText: label),
+        controller: controller,
+      );
+    } else {
+      return TextFormField(
+        keyboardType: keyboardType,
+        decoration: InputDecoration(labelText: label),
+        controller: controller,
+      );
+    }
   }
 
   Widget textFieldTap(String label) {

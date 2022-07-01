@@ -125,7 +125,6 @@ class StaffProvider extends BaseProvider {
   }
 
   FutureOr updateStaffSuccess(StaffModel value) {
-    showAlert('Cập nhật nhân viên thành công');
     updateStaffSuccessCallback?.call();
     hideLoading();
   }

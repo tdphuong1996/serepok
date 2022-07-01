@@ -4,4 +4,5 @@ class Api {
   static const createStaff = "manager/staff";
   static const updateStaff = "manager/staff/update";
   static const createProduct = "manager/product";
+  static const updateProduct = "manager/product/update";
 }

@@ -20,3 +20,7 @@ class LoadingState extends StateApp {
 class Constant {
   static const PREF_USER = "PREF_USER";
 }
+
+enum TypeAction {
+  EDIT,ADD
+}
