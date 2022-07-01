@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:serepok/api/repository/staff_repository.dart';
@@ -14,21 +15,27 @@ class StaffProvider extends BaseProvider {
   final StaffRepository _staffRepository = StaffRepository();
   List<StaffModel> listStaff = [];
   int lastPage = 0;
-  int total = 0;
   Function? createStaffSuccessCallback;
   Function? updateStaffSuccessCallback;
 
-  Future<void> getListStaff(int page) async {
-    showLoading();
-     await _staffRepository.getListStaff(page)
-        .then(handleDataList)
-        .onError(handleError);
+  Future<void> getListStaff() async {
+    if(!isRefresh) { showLoading();}
+    try {
+      final response = await _staffRepository.getListStaff(pageNumber);
+      handleDataList(response);
+      hideLoading();
+    } on Exception catch (error) {
+      hideLoading();
+    }
   }
 
-  FutureOr handleDataList(PagingResponseModel<StaffModel> data) async {
+  void handleDataList(PagingResponseModel<StaffModel> data) {
+    if (isRefresh) {
+      isRefresh = false;
+      listStaff.clear();
+    }
     listStaff.addAll(data.data);
     lastPage = data.lastPage;
-    total = data.total;
     notifyListeners();
     hideLoading();
   }
@@ -55,7 +62,7 @@ class StaffProvider extends BaseProvider {
     if (image != null) {
       avatar = await MultipartFile.fromFile(image.path,
           filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg");
-    }else{
+    } else {
       avatar = null;
     }
     var formData = FormData.fromMap({
@@ -73,8 +80,8 @@ class StaffProvider extends BaseProvider {
         .onError(handleError);
   }
 
-  void updateStaff(int staffId, String name, String phone,
-      String email, Role? role, File? image) async {
+  void updateStaff(int staffId, String name, String phone, String email,
+      Role? role, File? image) async {
     String message = "";
     if (name.isEmpty || phone.isEmpty || email.isEmpty || role == null) {
       message = "Vui lòng nhập đầy đủ thông tin";
@@ -88,7 +95,7 @@ class StaffProvider extends BaseProvider {
     if (image != null) {
       avatar = await MultipartFile.fromFile(image.path,
           filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg");
-    }else{
+    } else {
       avatar = null;
     }
     var formData = FormData.fromMap({

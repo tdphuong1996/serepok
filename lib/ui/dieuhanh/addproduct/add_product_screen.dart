@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:serepok/model/product_model.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_provider.dart';
 
 import '../../../res/AppThemes.dart';

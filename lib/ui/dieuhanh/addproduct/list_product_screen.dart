@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/product_model.dart';
 
+import '../../../res/view.dart';
 import 'add_product_provider.dart';
 
 class ListProductScreen extends StatefulWidget {
@@ -20,31 +21,33 @@ class _ListProductScreenState extends State<ListProductScreen> {
     super.initState();
     _productProvider = Provider.of<ProductProvider>(context, listen: false);
     _productProvider.context = context;
+    _productProvider.getListProduct();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _productProvider.listProduct.length,
-      itemBuilder: (context, index) {
-        return item(_productProvider.listProduct[index]);
-      },
-    );
+    return Consumer<ProductProvider>(builder: (context, value, child) {
+      return ListView.builder(
+        itemCount: value.listProduct.length,
+        itemBuilder: (context, index) {
+          return item(value.listProduct[index]);
+        },
+      );
+    });
   }
 
   Widget item(ProductModel product) {
     return InkWell(
-      onTap: () => {
-
-      },
+      onTap: () => {},
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Row(
           children: [
             SizedBox(
-                height: 60,
-                width: 60,
-                child: Image.network(product.imageUrl)),
+                height: 60, width: 60, child:ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+              child:  ImageNetwork(product.imageUrl)),
+            ),
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -55,15 +58,15 @@ class _ListProductScreenState extends State<ListProductScreen> {
                 ],
               ),
             )),
-            const SizedBox(
-              height: 60,
-              width: 30,
-              child:
-                  Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
-            ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _productProvider.listProduct = [];
+    super.dispose();
   }
 }

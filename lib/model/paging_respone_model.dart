@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:serepok/model/product_model.dart';
 import 'package:serepok/model/staff.dart';
 
 class PagingResponseModel<T> {
@@ -23,6 +26,8 @@ class PagingResponseModel<T> {
     if (json is List<dynamic>) {
       if (T == StaffModel) {
         return List.from(json.map((e) => StaffModel.fromJson(e)).toList());
+      }else if(T == ProductModel) {
+        return List.from(json.map((e) => ProductModel.fromJson(e)).toList());
       }
     }
 

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/staff.dart';
+import 'package:serepok/res/view.dart';
 import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 
 import '../../../routes.dart';
@@ -18,62 +19,17 @@ class ListEmployeeScreen extends StatefulWidget {
 class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   late StaffProvider _staffProvider;
   late ScrollController _controller;
-  List<StaffModel> listStaff = [];
   bool _isLoadMoreRunning = false;
-  bool _hasNextPage = true;
-  int _currentPage = 1;
-  int _lastPage = 1;
-
-
-  Future _firstLoad() async {
-    setState(() async {
-      await _staffProvider.getListStaff(_currentPage);
-      listStaff = _staffProvider.listStaff;
-      _lastPage = _staffProvider.lastPage;
-    });
-  }
-
-  void _loadMore() async {
-    if (_currentPage < _lastPage) {
-      setState(() {
-        _isLoadMoreRunning = true; // Display a progress indicator at the bottom
-      });
-      _currentPage += 1; // Increase _page by 1
-      if (_staffProvider.listStaff.length <= _staffProvider.total) {
-        await _staffProvider.getListStaff(_currentPage);
-        setState(() {
-          listStaff = _staffProvider.listStaff;
-        });
-      } else {
-        // This means there is no more data
-        // and therefore, we will not send another GET request
-        setState(() {
-          _hasNextPage = false;
-        });
-      }
-      setState(() {
-        _isLoadMoreRunning = false;
-      });
-    }
-  }
-
-  Future _refresh() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-    setState(() {
-      listStaff.clear();
-      _currentPage = 1;
-      _firstLoad();
-    });
-  }
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _staffProvider = Provider.of<StaffProvider>(context, listen: false);
     _staffProvider.context = context;
-    _controller = ScrollController()
-      ..addListener(_loadMore);
-    _firstLoad();
+    _staffProvider.getListStaff();
+    _controller = ScrollController();
+    // ..addListener(_loadMore);
   }
 
   @override
@@ -86,9 +42,9 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
               onRefresh: _refresh,
               child: ListView.builder(
                 controller: _controller,
-                itemCount: listStaff.length,
+                itemCount: _staffProvider.listStaff.length,
                 itemBuilder: (context, index) {
-                  return item(listStaff[index]);
+                  return item(_staffProvider.listStaff[index]);
                 },
               ),
             ),
@@ -107,8 +63,7 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
 
   Widget item(StaffModel staffModel) {
     return InkWell(
-      onTap: () =>
-      {
+      onTap: () => {
         Navigator.of(context)
             .pushNamed(Routes.ADD_EMPLOYEE, arguments: staffModel)
       },
@@ -119,23 +74,26 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
             SizedBox(
                 height: 60,
                 width: 60,
-                child: Image.network(staffModel.avatarUrl)),
+                child: ClipRRect(
+                 borderRadius: BorderRadius.circular(30),
+                  child: ImageNetwork(staffModel.avatarUrl)),
+                ),
             Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(staffModel.name),
-                      Text(staffModel.phone),
-                    ],
-                  ),
-                )),
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(staffModel.name),
+                  Text(staffModel.phone),
+                ],
+              ),
+            )),
             const SizedBox(
               height: 60,
               width: 30,
               child:
-              Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
+                  Icon(FontAwesomeIcons.ellipsisVertical, color: Colors.grey),
             ),
           ],
         ),
@@ -146,7 +104,13 @@ class _ListEmployeeScreenState extends State<ListEmployeeScreen> {
   @override
   void dispose() {
     _staffProvider.dispose();
-    _controller.removeListener(_loadMore);
+    // _controller.removeListener(_loadMore);
     super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    _staffProvider.isRefresh = true;
+    _staffProvider.pageNumber = 1;
+    await _staffProvider.getListStaff();
   }
 }

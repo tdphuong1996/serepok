@@ -33,7 +33,10 @@ class BaseResponseModel<T> {
         return User.fromJson(json) as T;
       } else if (T == PagingResponseModel<StaffModel>) {
         return PagingResponseModel<StaffModel>.fromJson(json) as T;
-      } else if (T == StaffModel) {
+      }else if (T == PagingResponseModel<ProductModel>) {
+        return PagingResponseModel<ProductModel>.fromJson(json) as T;
+      }
+      else if (T == StaffModel) {
         return StaffModel.fromJson(json) as T;
       }else if (T == ProductModel) {
         return ProductModel.fromJson(json) as T;

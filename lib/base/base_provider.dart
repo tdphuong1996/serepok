@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class BaseProvider with ChangeNotifier {
   BuildContext? context = null;
+  int pageNumber = 1;
+  bool isRefresh =  false;
 
 
   bool isLoading = false;

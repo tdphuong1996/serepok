@@ -14,8 +14,8 @@ class ApiClient {
   ApiClient() {
     BaseOptions options = BaseOptions(
       baseUrl: _baseUrl,
-      connectTimeout: 3000,
-      receiveTimeout: 3000,
+      connectTimeout: 20000,
+      receiveTimeout: 20000,
     );
     _dio.options = options;
     _dio.interceptors.add(PrettyDioLogger(
