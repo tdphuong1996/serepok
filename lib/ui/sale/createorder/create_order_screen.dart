@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:serepok/model/product_model.dart';
 
 import '../../../res/AppThemes.dart';
+import '../../../routes.dart';
 
 class CreateOrderScreen extends StatefulWidget {
   const CreateOrderScreen({Key? key}) : super(key: key);
@@ -13,6 +15,11 @@ class CreateOrderScreen extends StatefulWidget {
 }
 
 class _CreateOrderScreenState extends State<CreateOrderScreen> {
+  TextEditingController _editingFullNameController =  TextEditingController();
+  TextEditingController _editingPhoneNumberController =  TextEditingController();
+  TextEditingController _editingAddressController =  TextEditingController();
+  TextEditingController _editingProductNameController =  TextEditingController();
+  TextEditingController _editingController =  TextEditingController();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -66,6 +73,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             ],
           )),
     );
+  }
+  Future<void> chooseProduct() async {
+    final result = await Navigator.of(context).pushNamed(Routes.CHOOSE_PRODUCT);
+    if (result!=null) {
+     final product =  result as ProductModel;
+
+    }
   }
 
   Widget header() {

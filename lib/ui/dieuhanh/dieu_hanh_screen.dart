@@ -20,11 +20,11 @@ class DieuHanhScreen extends StatefulWidget {
 
 class _DieuHanhScreenState extends State<DieuHanhScreen> {
   int _selectedIndex = 0;
-  static const List<Widget> _listPage = <Widget>[
-    ListEmployeeScreen(),
+  static  final List<Widget> _listPage = <Widget>[
+    const ListEmployeeScreen(),
     ListProductScreen(),
-    ReportScreen(),
-    ReportScreen(),
+    const ReportScreen(),
+    const ReportScreen(),
   ];
 
   @override

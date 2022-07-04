@@ -9,7 +9,10 @@ import '../../../routes.dart';
 import 'add_product_provider.dart';
 
 class ListProductScreen extends StatefulWidget {
-  const ListProductScreen({Key? key}) : super(key: key);
+  Function(ProductModel)? itemClickCallback;
+
+
+  ListProductScreen( {this.itemClickCallback,Key? key}) : super(key: key);
 
   @override
   State<ListProductScreen> createState() => _ListProductScreenState();

@@ -42,34 +42,14 @@ class _SaleScreenState extends State<SaleScreen> {
     });
   }
 
-  void _add() {
-
-    if (_selectedIndex==0) {
-      Navigator.of(context).pushNamed(Routes.ADD_EMPLOYEE);
-    }else if (_selectedIndex == 1) {
-      Navigator.of(context).pushNamed(Routes.ADD_PRODUCT);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Bán hàng'),
         leading: Container(),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 30,
-              width: 30,
-              child: InkWell(
-                child: const Icon(FontAwesomeIcons.plus),
-                onTap: () => {_add()},
-              ),
-            ),
-          )
-        ],
+
       ),
       body: IndexedStack(
         index: _selectedIndex,
