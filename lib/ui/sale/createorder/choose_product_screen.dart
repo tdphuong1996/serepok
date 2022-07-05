@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:serepok/model/product_model.dart';
+import 'package:serepok/res/constant.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/list_product_screen.dart';
 
 class ChooseProductScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _ChooseProductScreenState extends State<ChooseProductScreen> {
       appBar: AppBar(
         title: const Text('Chọn sản phẩm'),
       ),
-      body: ListProductScreen(itemClickCallback: itemProductClick),
+      body: const ListProductScreen("SELECT"),
     );
   }
 

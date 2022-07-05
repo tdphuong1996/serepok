@@ -4,15 +4,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/product_model.dart';
 
+import '../../../res/constant.dart';
 import '../../../res/view.dart';
 import '../../../routes.dart';
 import 'add_product_provider.dart';
 
 class ListProductScreen extends StatefulWidget {
-  Function(ProductModel)? itemClickCallback;
+  final String? _type;
 
-
-  ListProductScreen( {this.itemClickCallback,Key? key}) : super(key: key);
+  const ListProductScreen(this._type,  {Key? key}) : super(key: key);
 
   @override
   State<ListProductScreen> createState() => _ListProductScreenState();
@@ -23,6 +23,8 @@ class _ListProductScreenState extends State<ListProductScreen> {
   late ScrollController _controller;
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
+  TypeActionList _typeAction = TypeActionList.SELECT;
+
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
     _productProvider.getListProduct();
     _controller = ScrollController();
     _controller.addListener(_loadMore);
+    _typeAction = widget._type == "SELECT" ? _typeAction = TypeActionList.SELECT : TypeActionList.ADDEDIT;
   }
 
   @override
@@ -68,13 +71,21 @@ class _ListProductScreenState extends State<ListProductScreen> {
   }
 
   Future<void> itemClick(ProductModel product) async {
-    final result = await Navigator.pushNamed(context, Routes.ADD_PRODUCT,
-        arguments: product);
-    if (result != null) {
-      showOkAlertDialog(
-          context: context, message: 'Cập nhật thông tin thành công');
-      _refresh();
+    if(_typeAction == TypeActionList.SELECT){
+      itemProductClick(product);
+    }else{
+      final result = await Navigator.pushNamed(context, Routes.ADD_PRODUCT,
+          arguments: product);
+      if (result != null) {
+        showOkAlertDialog(
+            context: context, message: 'Cập nhật thông tin thành công');
+        _refresh();
+      }
     }
+  }
+
+  void itemProductClick(ProductModel product) {
+    Navigator.pop(context, product);
   }
 
   Widget item(ProductModel product) {

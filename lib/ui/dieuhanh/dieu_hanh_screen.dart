@@ -22,7 +22,7 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
   int _selectedIndex = 0;
   static  final List<Widget> _listPage = <Widget>[
     const ListEmployeeScreen(),
-    ListProductScreen(),
+    const ListProductScreen(""),
     const ReportScreen(),
     const ReportScreen(),
   ];

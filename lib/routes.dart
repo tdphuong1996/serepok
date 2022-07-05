@@ -8,5 +8,7 @@ class Routes {
   static const  CHOOSE_PRODUCT = "CHOOSE_PRODUCT";
   static const  SALE_SCREEN = "SALE_SCREEN";
   static const  LOGIN_SCREEN = "LOGIN_SCREEN";
+  static const  LIST_PRODUCT = "LIST_PRODUCT";
+  static const  CREATE_ORDER = "CREATE_ORDER";
 
 }

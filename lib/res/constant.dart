@@ -24,3 +24,11 @@ class Constant {
 enum TypeAction {
   EDIT,ADD
 }
+
+enum TypeActionList {
+  SELECT,ADDEDIT
+}
+
+enum TypePay {
+  PAID,PAYLATER
+}

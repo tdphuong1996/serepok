@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:serepok/model/order_model.dart';
 import 'package:serepok/res/AppThemes.dart';
 import 'package:serepok/ui/sale/createorder/create_order_screen.dart';
 import 'package:serepok/ui/sale/donchodonchot/don_cho_screen.dart';
@@ -15,11 +16,29 @@ class SaleScreen extends StatefulWidget {
 
 class _SaleScreenState extends State<SaleScreen> {
   int _selectedIndex = 0;
-  static const List<Widget> _listPage = <Widget>[
-    CreateOrderScreen(),
-    DonChoScreen(),
-    DonChoScreen(),
-    DonChoScreen(),
+  static final List<Widget> _listPage = <Widget>[
+    CreateOrderScreen(OrderModel(
+        id: 0,
+        code: "",
+        operatorId: 0,
+        customerId: "",
+        name: "",
+        address: "",
+        phone: "",
+        total: 0,
+        subTotal: 0,
+        profit: 0,
+        status: 0,
+        moneyType: 0,
+        advanceMoney: 0,
+        collectMoney: 0,
+        note: "",
+        createdAt: DateTime(DateTime.monday),
+        updatedAt: DateTime(DateTime.monday),
+        orderDetails: <OrderDetail>[])),
+    const DonChoScreen(),
+    const DonChoScreen(),
+    const DonChoScreen(),
   ];
 
   @override
@@ -35,9 +54,8 @@ class _SaleScreenState extends State<SaleScreen> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index==3) {
+      if (index == 3) {
         Navigator.pop(context);
-
       }
     });
   }
@@ -49,7 +67,6 @@ class _SaleScreenState extends State<SaleScreen> {
         centerTitle: true,
         title: const Text('Bán hàng'),
         leading: Container(),
-
       ),
       body: IndexedStack(
         index: _selectedIndex,

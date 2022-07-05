@@ -96,7 +96,7 @@ class ProductProvider extends BaseProvider {
         'garden_name': gardenName,
         'description': description,
         'status': 1,
-        'image': await MultipartFile.fromFile(image!.path,
+        'image': await MultipartFile.fromFile(image.path,
             filename: "image_${DateTime.now().millisecondsSinceEpoch}.jpg")
       });
     } else {

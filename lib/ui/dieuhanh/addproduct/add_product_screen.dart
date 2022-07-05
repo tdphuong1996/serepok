@@ -16,9 +16,9 @@ import '../../../res/AppThemes.dart';
 import '../../../res/constant.dart';
 
 class AddProductScreen extends StatefulWidget {
-  ProductModel? _product;
+  final ProductModel? _product;
 
-  AddProductScreen(this._product, {Key? key}) : super(key: key);
+  const AddProductScreen(this._product, {Key? key}) : super(key: key);
 
   @override
   State<AddProductScreen> createState() => _AddProductScreenState();

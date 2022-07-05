@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
+import 'package:serepok/model/order_model.dart';
 import 'package:serepok/model/product_model.dart';
 import 'package:serepok/model/staff.dart';
 import 'package:serepok/res/AppThemes.dart';
@@ -12,8 +13,11 @@ import 'package:serepok/ui/dieuhanh/addemployee/add_employee_screen.dart';
 import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
+import 'package:serepok/ui/dieuhanh/addproduct/list_product_screen.dart';
 import 'package:serepok/ui/home/common_widget_screen.dart';
 import 'package:serepok/ui/sale/createorder/choose_product_screen.dart';
+import 'package:serepok/ui/sale/createorder/create_order_screen.dart';
+import 'package:serepok/ui/sale/createorder/order_provider.dart';
 import 'package:serepok/ui/sale/sale_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,6 +35,9 @@ void main() {
       ),
       ChangeNotifierProvider(
         create: (_) => ProductProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => OrderProvider(),
       ),
     ], child: const MyApp()),
   );
@@ -81,6 +88,8 @@ class MyApp extends StatelessWidget {
               Routes.SALE_SCREEN: (context) => const SaleScreen(),
               Routes.CHOOSE_PRODUCT: (context) => const ChooseProductScreen(),
               Routes.ADD_PRODUCT: (context) =>  AddProductScreen(ModalRoute.of(context)!.settings.arguments as ProductModel?),
+              Routes.CREATE_ORDER: (context) =>  CreateOrderScreen(ModalRoute.of(context)!.settings.arguments as OrderModel?),
+              Routes.LIST_PRODUCT: (context) =>  ListProductScreen(ModalRoute.of(context)!.settings.arguments as String?),
               Routes.COMMON_SCREEN: (context) =>
                   const CommonWidgetPage(title: "Common"),
             },
