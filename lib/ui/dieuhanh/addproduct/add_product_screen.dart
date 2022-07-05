@@ -62,12 +62,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
     if (_typeAction == TypeAction.EDIT) {
       setDefaultData();
     }
+    _editingUnitProductController.text = 'Quả';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(_typeAction == TypeAction.ADD
             ? 'Tạo sản phấm'
             : 'Cật nhật sản phẩm'),
@@ -107,7 +109,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         height(),
                         viewPrice(),
                         height(),
-                        textField("Giá sỉ", _editingCostProductController,
+                        textField("Giá nhập", _editingCostProductController,
                             isNumber: true),
                         height(),
                         textField(
@@ -248,7 +250,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           width: 16,
         ),
         Expanded(
-            flex: 3, child: textField("Đơn vị", _editingUnitProductController))
+            flex: 3, child: IgnorePointer(child: textField('Đơn vị', _editingUnitProductController),))
       ],
     );
   }
@@ -294,14 +296,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
   }
 
-  Widget textFieldTap(String label) {
+  Widget textFieldTap(String label,TextEditingController controller) {
     return InkWell(
       child: IgnorePointer(
         child: TextFormField(
           decoration: InputDecoration(
               labelText: label,
               suffixIcon: const Icon(FontAwesomeIcons.angleDown)),
-          controller: _editingUnitProductController,
+          controller: controller,
         ),
       ),
     );
