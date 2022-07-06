@@ -48,7 +48,7 @@ class OrderProvider extends BaseProvider {
       String amount,
       ) async{
     showLoading();
-    String paramId = "product[$productId]";
+    String paramId = "products[$productId]";
     int tamUng = 0;
     int thuHo = 0;
     if(moneyType == 2){

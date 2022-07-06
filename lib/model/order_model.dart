@@ -1,10 +1,10 @@
 import 'package:serepok/model/product_model.dart';
 
-class OrderModel{
+class OrderModel {
   int id;
   String code;
   int operatorId;
-  String customerId;
+  int customerId;
   String name;
   String phone;
   String address;
@@ -16,12 +16,11 @@ class OrderModel{
   int advanceMoney;
   int collectMoney;
   String note;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   List<OrderDetail> orderDetails;
 
-  OrderModel(
-  {
+  OrderModel({
     required this.id,
     required this.code,
     required this.operatorId,
@@ -42,18 +41,18 @@ class OrderModel{
     required this.orderDetails,
   });
 
-  factory OrderModel.fromJson(Map<String, dynamic> json){
-    try{
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    try {
       return OrderModel(
         id: json['id'],
         code: json['code'],
-        operatorId: json['cooperator_id'],
+        operatorId: json['operator_id'],
         customerId: json['customer_id'],
         name: json['name'],
         phone: json['phone'],
         address: json['address'],
         total: json['total'],
-        subTotal: json['subTotal'],
+        subTotal: json['sub_total'],
         profit: json['profit'],
         status: json['status'],
         moneyType: json['money_type'],
@@ -62,23 +61,25 @@ class OrderModel{
         note: json['note'],
         createdAt: json['created_at'],
         updatedAt: json['updated_at'],
-        orderDetails: json['order_details'],
+        orderDetails: List.from(json['order_details'])
+            .map((item) => OrderDetail.fromJson(item))
+            .toList(),
       );
-    }on Exception {
+    } on Exception {
       rethrow;
     }
   }
 }
 
-class OrderDetail{
+class OrderDetail {
   int id;
   int orderId;
   int productId;
   int price;
   int cost;
   int quantity;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String createdAt;
+  String updatedAt;
   ProductModel product;
 
   OrderDetail({
@@ -93,8 +94,8 @@ class OrderDetail{
     required this.product,
   });
 
-  factory OrderDetail.fromJson(Map<String, dynamic> json){
-    try{
+  factory OrderDetail.fromJson(Map<String, dynamic> json) {
+    try {
       return OrderDetail(
         id: json['id'],
         orderId: json['order_id'],
@@ -106,7 +107,7 @@ class OrderDetail{
         updatedAt: json['updated_at'],
         product: json['product'],
       );
-    }on Exception {
+    } on Exception {
       rethrow;
     }
   }

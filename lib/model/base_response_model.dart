@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:serepok/model/order_model.dart';
 import 'package:serepok/model/paging_respone_model.dart';
 import 'package:serepok/model/staff.dart';
 
@@ -36,9 +37,15 @@ class BaseResponseModel<T> {
       }else if (T == PagingResponseModel<ProductModel>) {
         return PagingResponseModel<ProductModel>.fromJson(json) as T;
       }
+      else if (T == PagingResponseModel<OrderModel>) {
+        return PagingResponseModel<OrderModel>.fromJson(json) as T;
+      }
       else if (T == StaffModel) {
         return StaffModel.fromJson(json) as T;
       }else if (T == ProductModel) {
+        return ProductModel.fromJson(json) as T;
+      }
+      else if (T == OrderModel) {
         return ProductModel.fromJson(json) as T;
       }
     }
