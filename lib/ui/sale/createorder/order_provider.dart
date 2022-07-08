@@ -69,9 +69,49 @@ class OrderProvider extends BaseProvider {
     _orderRepository.createOrder(formData).then(createOrderSuccess).onError(handleError);
   }
 
+  void updateOrder(
+      String name,
+      String phone,
+      String address,
+      int moneyType,
+      String advanceMoney,
+      String collectMoney,
+      String note,
+      int productId,
+      String amount,
+      int orderId,
+      ) async{
+    showLoading();
+    String paramId = "products[$productId]";
+    int tamUng = 0;
+    int thuHo = 0;
+    if(moneyType == 2){
+      tamUng = int.parse(advanceMoney);
+      thuHo = int.parse(collectMoney);
+    }
+    var formData = FormData.fromMap({
+      'name': name,
+      'phone': phone,
+      'address': address,
+      'money_type': moneyType,
+      'advance_money': tamUng,
+      'collect_money': thuHo,
+      'note': note,
+      paramId: int.parse(amount)
+    });
+
+    _orderRepository.updateOrder(formData, orderId).then(updateOrderSuccess).onError(handleError);
+  }
+
   FutureOr createOrderSuccess(l){
-    showAlert('Tạo sản phẩm thành thành công');
+    showAlert('Tạo đơn hàng thành công');
     createOrderSuccessCallback?.call();
+    hideLoading();
+  }
+
+  FutureOr updateOrderSuccess(OrderModel orderModel){
+    showAlert('Cập nhật đơn hàng thành công');
+    updateOrderSuccessCallback?.call();
     hideLoading();
   }
 }

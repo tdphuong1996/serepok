@@ -1,15 +1,15 @@
 class ProductModel {
   int id;
-  int price;
-  int cost;
-  String code;
-  String unit;
-  String name;
-  String gardenName;
-  String location;
-  String species;
-  String description;
-  String imageUrl;
+  int? price;
+  int? cost;
+  String? code;
+  String? unit;
+  String? name;
+  String? gardenName;
+  String? location;
+  String? species;
+  String? description;
+  String? imageUrl;
 
   ProductModel(
       {required this.id,

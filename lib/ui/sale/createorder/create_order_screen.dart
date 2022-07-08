@@ -54,6 +54,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   TypePay _typePay = TypePay.PAID;
   bool _isEditCOD = false;
   int _productId = 0;
+  int _orderId = 0;
 
   @override
   void initState() {
@@ -63,10 +64,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _orderProvider.context = context;
       _orderProvider.createOrderSuccessCallback = resetData;
       _orderProvider.updateOrderSuccessCallback = () {
-        Navigator.pop(context, "update_success");
+        Navigator.pop(context, "update_product_success");
       };
-      _typeAction =
-          widget._orderModel?.id != 0 ? TypeAction.EDIT : TypeAction.ADD;
+      if (widget._orderModel?.id != 0){
+        _typeAction = TypeAction.EDIT;
+        _orderId = widget._orderModel!.id;
+      }else {
+        _typeAction = TypeAction.ADD;
+      }
       if (_typeAction == TypeAction.EDIT) {
         setDefaultData();
       }
@@ -77,62 +82,71 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanDown: (pd) {
-        FocusScope.of(context).unfocus();
-      },
-      child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      height(),
-                      textField("Tên khách hàng", _editingFullNameController),
-                      height(),
-                      textField("Số điện thoại", _editingPhoneNumberController),
-                      height(),
-                      textField("Địa chỉ", _editingAddressController),
-                      height(),
-                      textFieldTap("Tên hàng"),
-                      height(),
-                      viewChungLoaiDVT(),
-                      height(),
-                      viewSoLuongDonGia(),
-                      height(),
-                      textField(
-                          "Tổng tiền", _editingProductTotalMoneyController,
-                          isNotEdit: true),
-                      height(),
-                      header(),
-                      height(),
-                      paymentView(),
-                      textField("Ghi chú", _editingNoteController),
-                      height(),
-                    ],
+    return Scaffold(
+      appBar: _typeAction == TypeAction.EDIT
+      ? AppBar(
+        centerTitle: true,
+        title: const Text('Cật nhật đơn hàng'),
+      ) : null,
+      body: GestureDetector(
+        onPanDown: (pd) {
+          FocusScope.of(context).unfocus();
+        },
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        height(),
+                        textField("Tên khách hàng", _editingFullNameController),
+                        height(),
+                        textField(
+                            "Số điện thoại", _editingPhoneNumberController),
+                        height(),
+                        textField("Địa chỉ", _editingAddressController),
+                        height(),
+                        textFieldTap("Tên hàng"),
+                        height(),
+                        viewChungLoaiDVT(),
+                        height(),
+                        viewSoLuongDonGia(),
+                        height(),
+                        textField(
+                            "Tổng tiền", _editingProductTotalMoneyController,
+                            isNotEdit: true),
+                        height(),
+                        header(),
+                        height(),
+                        paymentView(),
+                        textField("Ghi chú", _editingNoteController),
+                        height(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: CupertinoButton(
-                      color: MyColor.PRIMARY_COLOR,
-                      onPressed: () {
-                        createOrder();
-                      },
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      padding: const EdgeInsets.only(
-                          top: 8, left: 32, right: 32, bottom: 8),
-                      pressedOpacity: 0.5,
-                      child: const Text('Hoàn thành')),
-                ),
-              )
-            ],
-          )),
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: CupertinoButton(
+                        color: MyColor.PRIMARY_COLOR,
+                        onPressed: () {
+                          createOrder();
+                        },
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
+                        padding: const EdgeInsets.only(
+                            top: 8, left: 32, right: 32, bottom: 8),
+                        pressedOpacity: 0.5,
+                        child: Text(_typeAction == TypeAction.ADD ? 'Hoàn thành': 'Cập nhật')),
+                  ),
+                )
+              ],
+            )),
+      ),
     );
   }
 
@@ -140,11 +154,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     final result = await Navigator.of(context).pushNamed(Routes.CHOOSE_PRODUCT);
     if (result != null) {
       final product = result as ProductModel;
-      _editingProductNameController.text = product.name;
-      _editingProductTypeController.text = product.species;
-      _editingProductUnitController.text = product.unit;
+      _editingProductNameController.text = product.name!;
+      _editingProductTypeController.text = product.species!;
+      _editingProductUnitController.text = product.unit!;
       _editingProductPriceController.text = product.price.toString();
       _productId = product.id;
+      if (_editingProductAmountController.text.isNotEmpty){
+        _editingProductTotalMoneyController.text = (int.parse(_editingProductAmountController.text) * int.parse(_editingProductPriceController.text)).toString();
+      }
     }
   }
 
@@ -253,6 +270,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         onChanged: (TypePay? value) {
                           setState(() {
                             _typePay = value!;
+                            _editingTamUngController.text = "";
+                            _editingThuHoController.text = "";
                           });
                         },
                       ),
@@ -351,10 +370,45 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     String collectMoney = _editingThuHoController.text;
     String note = _editingNoteController.text;
     int productId = _productId;
+    int orderId = _orderId;
     String amount = _editingProductAmountController.text;
 
     switch (_typeAction) {
       case TypeAction.EDIT:
+        if (name.isEmpty ||
+            phone.isEmpty ||
+            address.isEmpty ||
+            amount.isEmpty) {
+          _orderProvider.showAlert('Vui lòng nhập đầy đủ thông tin!');
+          return;
+        } else {
+          if (productId == 0) {
+            _orderProvider.showAlert('Vui lòng chọn sản phẩm!');
+            return;
+          } else {
+            if (moneyType == 2) {
+              if (advanceMoney.isEmpty || collectMoney.isEmpty) {
+                _orderProvider.showAlert('Vui lòng nhập số tiền!');
+                return;
+              } else {
+                if (_editingProductTotalMoneyController.text.isNotEmpty) {
+                  int totalAmount =
+                  int.parse(_editingProductTotalMoneyController.text);
+                  int tamUng = int.parse(advanceMoney);
+                  int thuHo = int.parse(collectMoney);
+                  if (tamUng + thuHo < totalAmount) {
+                    _orderProvider
+                        .showAlert('Tổng tạm ứng và thu hộ không đúng!');
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        }
+        _orderProvider.updateOrder(name, phone, address, moneyType,
+            advanceMoney, collectMoney, note, productId, amount, orderId);
+        break;
       case TypeAction.ADD:
         if (name.isEmpty ||
             phone.isEmpty ||
@@ -393,6 +447,34 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     }
   }
 
+  void setDefaultData() {
+    final order = widget._orderModel!;
+    _editingFullNameController.text = order.name;
+    _editingPhoneNumberController.text = order.phone;
+    _editingAddressController.text = order.address;
+    _editingProductNameController.text = order.orderDetails.first.product.name!;
+    _editingProductTypeController.text = order.orderDetails.first.product.species!;
+    _editingProductUnitController.text = order.orderDetails.first.product.unit!;
+    _editingProductAmountController.text = order.orderDetails.first.quantity.toString();
+    _editingProductPriceController.text = order.orderDetails.first.product.price.toString();
+    if (order.note != null){
+      _editingNoteController.text = order.note!;
+    }else{
+      _editingNoteController.text = "";
+    }
+    _editingProductTotalMoneyController.text = (int.parse(_editingProductAmountController.text) * int.parse(_editingProductPriceController.text)).toString();
+    if (order.moneyType == 1){
+      _typePay = TypePay.PAID;
+      _editingTamUngController.text = "0";
+      _editingThuHoController.text = "0";
+    }else{
+      _editingTamUngController.text = order.advanceMoney.toString();
+      _editingThuHoController.text = order.collectMoney.toString();
+      _typePay = TypePay.PAYLATER;
+    }
+    _productId = order.orderDetails.first.productId;
+  }
+
   resetData() {
     _productId = 0;
     _isEditCOD = false;
@@ -413,6 +495,4 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       element.text = "";
     }
   }
-
-  void setDefaultData() {}
 }

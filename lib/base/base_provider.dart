@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -22,6 +24,7 @@ class BaseProvider with ChangeNotifier {
   }
 
   void handleErrors(Object error) {
+    debugPrint('error: $error');
     String message = "";
     if (error is DioError) {
       if (error.response?.data != null) {

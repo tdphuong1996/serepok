@@ -23,9 +23,9 @@ class OrderRepository {
     return dataResponse.handleData();
   }
 
-  Future<OrderModel> updateProduct(FormData formData, int id) async {
+  Future<OrderModel> updateOrder(FormData formData, int id) async {
     final dataResponse = await _apiClient.postFormData<OrderModel>(
-        "${Api.updateProduct}/$id", formData);
+        "${Api.updateOrder}/$id", formData);
     return dataResponse.handleData();
   }
 }

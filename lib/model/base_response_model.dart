@@ -46,7 +46,7 @@ class BaseResponseModel<T> {
         return ProductModel.fromJson(json) as T;
       }
       else if (T == OrderModel) {
-        return ProductModel.fromJson(json) as T;
+        return OrderModel.fromJson(json) as T;
       }
     }
 

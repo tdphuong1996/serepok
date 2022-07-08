@@ -72,7 +72,7 @@ class _DonChoScreenState extends State<DonChoScreen> {
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Card(
-          elevation: 3,
+          elevation: 5,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(8))),
           child: Padding(
@@ -81,26 +81,26 @@ class _DonChoScreenState extends State<DonChoScreen> {
               children: [
                 Row(
                   children: [
-                    itemInfo(FontAwesomeIcons.calendar, '12/12/1212'),
+                    itemInfo(FontAwesomeIcons.calendar, convertDatetime(orderModel.createdAt)),
                     const SizedBox(width: 30),
-                    itemInfo(FontAwesomeIcons.barcode, '234324A'),
+                    itemInfo(FontAwesomeIcons.barcode, orderModel.code),
                   ],
                 ),
                 const SizedBox(
                   height: 8,
                 ),
                 itemInfo(
-                    FontAwesomeIcons.circleInfo, 'Nguyen Van A -  09888787878'),
+                    FontAwesomeIcons.circleInfo, '${orderModel.name} -  ${orderModel.phone}'),
                 const SizedBox(
                   height: 8,
                 ),
                 itemInfo(FontAwesomeIcons.fileInvoice,
-                    'Sầu Ri6 - 10 - Dak nong  '),
+                    orderModel.orderDetails.first.product.name!),
                 const SizedBox(
                   height: 8,
                 ),
                 itemInfo(FontAwesomeIcons.listCheck,
-                    'Tạm ứng'),
+                    orderModel.moneyType == 1 ? 'Nhận đủ' : 'Tạm ứng'),
               ],
             ),
           ),
@@ -110,7 +110,7 @@ class _DonChoScreenState extends State<DonChoScreen> {
   }
 
   Future<void> itemClick(OrderModel orderModel) async {
-    final result = await Navigator.pushNamed(context, Routes.ADD_PRODUCT,
+    final result = await Navigator.pushNamed(context, Routes.CREATE_ORDER,
         arguments: orderModel);
     if (result != null) {
       showOkAlertDialog(
@@ -123,6 +123,12 @@ class _DonChoScreenState extends State<DonChoScreen> {
     _orderProvider.isRefresh = true;
     _orderProvider.pageNumber = 1;
     await _orderProvider.getListOrder();
+  }
+  String convertDatetime(String date){
+    String stringYear = date.substring(0,10);
+    String stringTime = date.substring(11,19);
+    String result = '$stringYear $stringTime';
+    return result;
   }
 
   void _loadMore() async {
@@ -158,7 +164,7 @@ Widget itemInfo(IconData icon, String info) {
       ),
       Text(
         info,
-        style: TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 16),
       )
     ],
   );

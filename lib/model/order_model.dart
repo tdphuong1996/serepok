@@ -15,7 +15,7 @@ class OrderModel {
   int moneyType;
   int advanceMoney;
   int collectMoney;
-  String note;
+  String? note;
   String createdAt;
   String updatedAt;
   List<OrderDetail> orderDetails;
@@ -105,7 +105,7 @@ class OrderDetail {
         quantity: json['quantity'],
         createdAt: json['created_at'],
         updatedAt: json['updated_at'],
-        product: json['product'],
+        product: ProductModel.fromJson(json['product']),
       );
     } on Exception {
       rethrow;

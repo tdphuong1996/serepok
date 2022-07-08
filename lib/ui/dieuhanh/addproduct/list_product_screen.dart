@@ -100,7 +100,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
               width: 60,
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: ImageNetwork(product.imageUrl)),
+                  child: ImageNetwork(product.imageUrl!)),
             ),
             Expanded(
                 child: Padding(
@@ -108,7 +108,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name),
+                  Text(product.name!),
                 ],
               ),
             )),

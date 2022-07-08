@@ -217,17 +217,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   void setDefaultData() {
     final product = widget._product!;
-    _editingNameProductController.text = product.name;
-    _editingDesProductController.text = product.description;
-    _editingTypeProductController.text = product.species;
+    _editingNameProductController.text = product.name!;
+    _editingDesProductController.text = product.description!;
+    _editingTypeProductController.text = product.species!;
     _editingPriceProductController.text =
         NumberFormat("#,###,###", "en_US").format(product.price);
     _editingCostProductController.text =
         NumberFormat("#,###,###", "en_US").format(product.cost);
-    _editingUnitProductController.text = product.unit;
-    _editingCodeProductController.text = product.code;
-    _editingAreaProductController.text = product.location;
-    _editingGardenNameController.text = product.gardenName;
+    _editingUnitProductController.text = product.unit!;
+    _editingCodeProductController.text = product.code!;
+    _editingAreaProductController.text = product.location!;
+    _editingGardenNameController.text = product.gardenName!;
   }
 
   Future<void> pickAvatar() async {
