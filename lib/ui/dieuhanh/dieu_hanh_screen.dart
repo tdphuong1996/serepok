@@ -51,7 +51,7 @@ class _DieuHanhScreenState extends State<DieuHanhScreen> {
 
     if (_selectedIndex==0) {
       Navigator.of(context)
-          .pushNamed(Routes.ADD_EMPLOYEE, arguments: StaffModel(id: 0, name: "", email: "", phone: "", avatarUrl: "", staffType: 0));
+          .pushNamed(Routes.ADD_EMPLOYEE, arguments: StaffModel(id: 0, name: "", email: "", phone: "", avatarUrl: "", staffType: 0, roles: []));
     }else if (_selectedIndex == 1) {
       Navigator.of(context).pushNamed(Routes.ADD_PRODUCT);
     }

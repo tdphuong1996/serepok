@@ -110,13 +110,8 @@ class _DonChoScreenState extends State<DonChoScreen> {
   }
 
   Future<void> itemClick(OrderModel orderModel) async {
-    final result = await Navigator.pushNamed(context, Routes.CREATE_ORDER,
+    Navigator.pushNamed(context, Routes.CREATE_ORDER,
         arguments: orderModel);
-    if (result != null) {
-      showOkAlertDialog(
-          context: context, message: 'Cập nhật thông tin thành công');
-      _refresh();
-    }
   }
 
   Future<void> _refresh() async {

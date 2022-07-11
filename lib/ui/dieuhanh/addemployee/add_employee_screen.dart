@@ -27,7 +27,11 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   File? image;
   final ImagePicker _picker = ImagePicker();
   Role? _role;
+  List<Role> _listRole = [];
   String? imageUrl;
+  final List<String> _listStringRole = [];
+  bool valuefirst = false;
+  bool valuesecond = false;
 
   final TextEditingController _editingNameController = TextEditingController();
   final TextEditingController _editingPhoneController = TextEditingController();
@@ -134,27 +138,43 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       width: double.infinity,
                       color: Colors.grey.shade200,
                     ),
-                    InkWell(
-                      onTap: () {
-                        _role = Role.SELL;
-                        _editingRoleController.text = "Nhân viên bán hàng";
-                        Navigator.pop(context);
+                    CheckboxListTile(
+                      checkColor: Colors.white,
+                      activeColor: MyColor.PRIMARY_COLOR,
+                      title: const Text("Nhân viên bán hàng"),
+                      value: valuefirst,
+                      onChanged: (bool? value) {
+                        if (value == true) {
+                          _listRole.add(Role.SELL);
+                          _listStringRole.add("Nhân viên bán hàng");
+                        } else {
+                          _listRole.remove(Role.SELL);
+                          _listStringRole.remove("Nhân viên bán hàng");
+                        }
+                        setState(() => {
+                              valuefirst = value!,
+                              _editingRoleController.text = _listStringRole.toString(),
+                            });
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text("Nhân viên bán hàng"),
-                      ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        _role = Role.SHIPPER;
-                        _editingRoleController.text = "Nhân viên giao hàng";
-                        Navigator.pop(context);
+                    CheckboxListTile(
+                      checkColor: Colors.white,
+                      activeColor: MyColor.PRIMARY_COLOR,
+                      title: const Text("Nhân viên giao hàng"),
+                      value: valuesecond,
+                      onChanged: (bool? value) {
+                        if (value == true) {
+                          _listRole.add(Role.SHIPPER);
+                          _listStringRole.add("Nhân viên giao hàng");
+                        } else {
+                          _listRole.remove(Role.SHIPPER);
+                          _listStringRole.remove("Nhân viên giao hàng");
+                        }
+                        setState(() => {
+                          valuesecond = value!,
+                          _editingRoleController.text = _listStringRole.toString(),
+                        });
                       },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text("Nhân viên giao hàng"),
-                      ),
                     ),
                   ],
                 ),
@@ -171,7 +191,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         _editingEmailController.text,
         _editingPasswordController.text,
         _editingRePasswordController.text,
-        _role,
+        _listRole,
         image);
   }
 
@@ -181,7 +201,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
         _editingNameController.text,
         _editingPhoneController.text,
         _editingEmailController.text,
-        _role,
+        _listRole,
         image);
   }
 
@@ -275,6 +295,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   resetData() {
     _role = null;
     image = null;
+    _listRole = [];
     _editingNameController.text = "";
     _editingPhoneController.text = "";
     _editingEmailController.text = "";
@@ -285,14 +306,25 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
 
   setupDefaultData() {
     if (widget._staffModel?.id != 0) {
-      _role = widget._staffModel!.staffType == 1 ? Role.SELL : Role.SHIPPER;
+      final _listTemp = widget._staffModel!.roles;
+      for (var role in _listTemp!){
+        if (role.id == 1) {
+          _listRole.add(Role.SELL);
+          valuefirst = true;
+          _listStringRole.add("Nhân viên bán hàng");
+          _editingRoleController.text = _listStringRole.toString();
+        }
+        if (role.id == 2) {
+          _listRole.add(Role.SHIPPER);
+          valuesecond = true;
+          _listStringRole.add("Nhân viên giao hàng");
+          _editingRoleController.text = _listStringRole.toString();
+        }
+      }
       imageUrl = widget._staffModel!.avatarUrl;
       _editingNameController.text = widget._staffModel!.name;
       _editingPhoneController.text = widget._staffModel!.phone;
       _editingEmailController.text = widget._staffModel!.email;
-      _editingRoleController.text = widget._staffModel!.staffType == 1
-          ? "Nhân viên bán hàng"
-          : "Nhân viên giao hàng";
     }
   }
 }

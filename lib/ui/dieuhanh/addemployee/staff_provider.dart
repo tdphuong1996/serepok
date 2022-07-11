@@ -42,14 +42,14 @@ class StaffProvider extends BaseProvider {
   }
 
   void createStaff(String name, String phone, String email, String password,
-      String repassword, Role? role, File? image) async {
+      String repassword, List<Role>? listRole, File? image) async {
     String message = "";
     if (name.isEmpty ||
         phone.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
         repassword.isEmpty ||
-        role == null) {
+        listRole == null) {
       message = "Vui lòng nhập đầy đủ thông tin";
     } else if (password != repassword) {
       message = "Mật khẩu nhập lại không chính xác";
@@ -66,13 +66,20 @@ class StaffProvider extends BaseProvider {
     } else {
       avatar = null;
     }
+    List<int>? listType;
+    if (listRole?.contains(Role.SELL) == true){
+      listType?.add(1);
+    }
+    if (listRole?.contains(Role.SHIPPER) == true){
+      listType?.add(2);
+    }
     var formData = FormData.fromMap({
       'name': name,
       'phone': phone,
       'status': 0,
       'email': email,
       'password': password,
-      'staff_type': role == Role.SELL ? 1 : 2,
+      'roles': listType,
       'avatar': avatar
     });
     _staffRepository
@@ -82,9 +89,9 @@ class StaffProvider extends BaseProvider {
   }
 
   void updateStaff(int staffId, String name, String phone, String email,
-      Role? role, File? image) async {
+      List<Role>? listRole, File? image) async {
     String message = "";
-    if (name.isEmpty || phone.isEmpty || email.isEmpty || role == null) {
+    if (name.isEmpty || phone.isEmpty || email.isEmpty || listRole == null) {
       message = "Vui lòng nhập đầy đủ thông tin";
     }
     if (message.isNotEmpty) {
@@ -99,12 +106,19 @@ class StaffProvider extends BaseProvider {
     } else {
       avatar = null;
     }
+    List<int>? listType;
+    if (listRole?.contains(Role.SELL) == true){
+      listType?.add(1);
+    }
+    if (listRole?.contains(Role.SHIPPER) == true){
+      listType?.add(2);
+    }
     var formData = FormData.fromMap({
       'name': name,
       'phone': phone,
       'status': 0,
       'email': email,
-      'staff_type': role == Role.SELL ? 1 : 2,
+      'roles': listType,
       'avatar': await MultipartFile.fromFile(image!.path,
           filename: "avatar_${DateTime.now().millisecondsSinceEpoch}.jpg")
     });
