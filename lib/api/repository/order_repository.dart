@@ -13,7 +13,7 @@ class OrderRepository {
       int pageNumber) async {
     final dataResponse = await _apiClient
         .get<PagingResponseModel<OrderModel>>(Api.createOrder,
-        param: {'page': pageNumber});
+        param: {'page': pageNumber, 'status': 0});
     return dataResponse.handleData();
   }
 
@@ -26,6 +26,12 @@ class OrderRepository {
   Future<OrderModel> updateOrder(FormData formData, int id) async {
     final dataResponse = await _apiClient.postFormData<OrderModel>(
         "${Api.updateOrder}/$id", formData);
+    return dataResponse.handleData();
+  }
+
+  Future updateOrderStatus(FormData formData, int id) async {
+    final dataResponse = await _apiClient.postFormData(
+        "${Api.updateOrderStatus}/$id", formData);
     return dataResponse.handleData();
   }
 }

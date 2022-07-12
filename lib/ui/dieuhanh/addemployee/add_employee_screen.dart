@@ -37,9 +37,9 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   final TextEditingController _editingPhoneController = TextEditingController();
   final TextEditingController _editingEmailController = TextEditingController();
   final TextEditingController _editingPasswordController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _editingRePasswordController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _editingRoleController = TextEditingController();
 
   late StaffProvider _staffProvider;
@@ -89,7 +89,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                               : updateStaff();
                         },
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
+                        const BorderRadius.all(Radius.circular(8)),
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
@@ -117,69 +117,82 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Wrap(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    const Center(
-                      child: Text(
-                        "Chọn phân quyền",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      height: 1,
-                      width: double.infinity,
-                      color: Colors.grey.shade200,
-                    ),
-                    CheckboxListTile(
-                      checkColor: Colors.white,
-                      activeColor: MyColor.PRIMARY_COLOR,
-                      title: const Text("Nhân viên bán hàng"),
-                      value: valuefirst,
-                      onChanged: (bool? value) {
-                        if (value == true) {
-                          _listRole.add(Role.SELL);
-                          _listStringRole.add("Nhân viên bán hàng");
-                        } else {
-                          _listRole.remove(Role.SELL);
-                          _listStringRole.remove("Nhân viên bán hàng");
-                        }
-                        setState(() => {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState
+                /*You can rename this!*/) {
+              return Wrap(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        const Center(
+                          child: Text(
+                            "Chọn phân quyền",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Container(
+                          height: 1,
+                          width: double.infinity,
+                          color: Colors.grey.shade200,
+                        ),
+                        CheckboxListTile(
+                          checkColor: Colors.white,
+                          activeColor: MyColor.PRIMARY_COLOR,
+                          title: const Text("Nhân viên bán hàng"),
+                          value: valuefirst,
+                          onChanged: (bool? value) {
+                            if (value == true) {
+                              _listRole.add(Role.SELL);
+                              _listStringRole.add("Nhân viên bán hàng;");
+                            } else {
+                              _listRole.remove(Role.SELL);
+                              _listStringRole.remove("Nhân viên bán hàng;");
+                            }
+                            String temp;
+                            setState(() =>
+                            {
                               valuefirst = value!,
-                              _editingRoleController.text = _listStringRole.toString(),
+                              temp = _listStringRole.toString().replaceAll("[",""),
+                              temp = temp.replaceAll("]",""),
+                              _editingRoleController.text = temp,
                             });
-                      },
+                          },
+                        ),
+                        CheckboxListTile(
+                          checkColor: Colors.white,
+                          activeColor: MyColor.PRIMARY_COLOR,
+                          title: const Text("Nhân viên giao hàng"),
+                          value: valuesecond,
+                          onChanged: (bool? value) {
+                            if (value == true) {
+                              _listRole.add(Role.SHIPPER);
+                              _listStringRole.add("Nhân viên giao hàng;");
+                            } else {
+                              _listRole.remove(Role.SHIPPER);
+                              _listStringRole.remove("Nhân viên giao hàng;");
+                            }
+                            String temp;
+                            setState(() =>
+                            {
+                              valuesecond = value!,
+                              temp = _listStringRole.toString().replaceAll("[",""),
+                              temp = temp.replaceAll("]",""),
+                              _editingRoleController.text = temp,
+                            });
+                          },
+                        ),
+                      ],
                     ),
-                    CheckboxListTile(
-                      checkColor: Colors.white,
-                      activeColor: MyColor.PRIMARY_COLOR,
-                      title: const Text("Nhân viên giao hàng"),
-                      value: valuesecond,
-                      onChanged: (bool? value) {
-                        if (value == true) {
-                          _listRole.add(Role.SHIPPER);
-                          _listStringRole.add("Nhân viên giao hàng");
-                        } else {
-                          _listRole.remove(Role.SHIPPER);
-                          _listStringRole.remove("Nhân viên giao hàng");
-                        }
-                        setState(() => {
-                          valuesecond = value!,
-                          _editingRoleController.text = _listStringRole.toString(),
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
+                  )
+                ],
+              );
+            },
           );
         });
   }
@@ -270,14 +283,14 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
           borderRadius: const BorderRadius.all(Radius.circular(40)),
           child: image != null
               ? Image.file(
-                  image!,
-                  fit: BoxFit.cover,
-                )
+            image!,
+            fit: BoxFit.cover,
+          )
               : imageUrl != null
-                  ? ImageNetwork(imageUrl!)
-                  : Container(
-                      color: Colors.grey.shade200,
-                    ),
+              ? ImageNetwork(imageUrl!)
+              : Container(
+            color: Colors.grey.shade200,
+          ),
         ),
       ),
     );
@@ -307,7 +320,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
   setupDefaultData() {
     if (widget._staffModel?.id != 0) {
       final _listTemp = widget._staffModel!.roles;
-      for (var role in _listTemp!){
+      for (var role in _listTemp!) {
         if (role.id == 1) {
           _listRole.add(Role.SELL);
           valuefirst = true;

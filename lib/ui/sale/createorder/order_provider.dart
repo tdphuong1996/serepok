@@ -12,7 +12,7 @@ class OrderProvider extends BaseProvider {
   Function? createOrderSuccessCallback;
   Function? updateOrderSuccessCallback;
   List<OrderModel> listOrder = [];
-
+  late int _status;
 
   Future<void> getListOrder() async {
     showLoading();
@@ -79,7 +79,7 @@ class OrderProvider extends BaseProvider {
       String note,
       int productId,
       String amount,
-      int orderId,
+      int orderId, int status,
       ) async{
     showLoading();
     String paramId = "products[$productId]";
@@ -99,7 +99,7 @@ class OrderProvider extends BaseProvider {
       'note': note,
       paramId: int.parse(amount)
     });
-
+    _status = status;
     _orderRepository.updateOrder(formData, orderId).then(updateOrderSuccess).onError(handleError);
   }
 
@@ -110,8 +110,16 @@ class OrderProvider extends BaseProvider {
   }
 
   FutureOr updateOrderSuccess(OrderModel orderModel){
+    var formData = FormData.fromMap({
+      'status': _status,
+    });
+    _orderRepository.updateOrderStatus((formData), orderModel.id).then(updateStatusSuccess).onError(handleError);
     showAlert('Cập nhật đơn hàng thành công');
     updateOrderSuccessCallback?.call();
+    hideLoading();
+  }
+
+  FutureOr updateStatusSuccess(l){
     hideLoading();
   }
 }

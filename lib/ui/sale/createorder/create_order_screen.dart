@@ -17,6 +17,8 @@ import '../../../res/AppThemes.dart';
 import '../../../res/constant.dart';
 import '../../../routes.dart';
 
+enum Status { CONFIRM, CANCEL }
+
 class CreateOrderScreen extends StatefulWidget {
   final OrderModel? _orderModel;
 
@@ -35,6 +37,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   final TextEditingController _editingAddressController =
       TextEditingController();
   final TextEditingController _editingProductNameController =
+      TextEditingController();
+  final TextEditingController _editingStatusController =
       TextEditingController();
   final TextEditingController _editingProductTypeController =
       TextEditingController();
@@ -55,6 +59,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   bool _isEditCOD = false;
   int _productId = 0;
   int _orderId = 0;
+  Status? _status;
 
   @override
   void initState() {
@@ -66,10 +71,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _orderProvider.updateOrderSuccessCallback = () {
         Navigator.pop(context, "update_product_success");
       };
-      if (widget._orderModel?.id != 0){
+      if (widget._orderModel?.id != 0) {
         _typeAction = TypeAction.EDIT;
         _orderId = widget._orderModel!.id;
-      }else {
+      } else {
         _typeAction = TypeAction.ADD;
       }
       if (_typeAction == TypeAction.EDIT) {
@@ -84,10 +89,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _typeAction == TypeAction.EDIT
-      ? AppBar(
-        centerTitle: true,
-        title: const Text('Cật nhật đơn hàng'),
-      ) : null,
+          ? AppBar(
+              centerTitle: true,
+              title: const Text('Cật nhật đơn hàng'),
+            )
+          : null,
       body: GestureDetector(
         onPanDown: (pd) {
           FocusScope.of(context).unfocus();
@@ -98,33 +104,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        height(),
-                        textField("Tên khách hàng", _editingFullNameController),
-                        height(),
-                        textField(
-                            "Số điện thoại", _editingPhoneNumberController),
-                        height(),
-                        textField("Địa chỉ", _editingAddressController),
-                        height(),
-                        textFieldTap("Tên hàng"),
-                        height(),
-                        viewChungLoaiDVT(),
-                        height(),
-                        viewSoLuongDonGia(),
-                        height(),
-                        textField(
-                            "Tổng tiền", _editingProductTotalMoneyController,
-                            isNotEdit: true),
-                        height(),
-                        header(),
-                        height(),
-                        paymentView(),
-                        textField("Ghi chú", _editingNoteController),
-                        height(),
-                      ],
-                    ),
+                    child: _typeAction == TypeAction.ADD
+                        ? viewCreate()
+                        : viewUpdate(),
                   ),
                 ),
                 SizedBox(
@@ -141,12 +123,72 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                         padding: const EdgeInsets.only(
                             top: 8, left: 32, right: 32, bottom: 8),
                         pressedOpacity: 0.5,
-                        child: Text(_typeAction == TypeAction.ADD ? 'Hoàn thành': 'Cập nhật')),
+                        child: Text(_typeAction == TypeAction.ADD
+                            ? 'Hoàn thành'
+                            : 'Cập nhật')),
                   ),
                 )
               ],
             )),
       ),
+    );
+  }
+
+  Widget viewUpdate() {
+    return Column(
+      children: [
+        height(),
+        textField("Tên khách hàng", _editingFullNameController),
+        height(),
+        textField("Số điện thoại", _editingPhoneNumberController),
+        height(),
+        textField("Địa chỉ", _editingAddressController),
+        height(),
+        textFieldTap("Tên hàng", true),
+        height(),
+        viewChungLoaiDVT(),
+        height(),
+        viewSoLuongDonGia(),
+        height(),
+        textFieldTap("Trạng thái đơn hàng", false),
+        height(),
+        textField("Tổng tiền", _editingProductTotalMoneyController,
+            isNotEdit: true),
+        height(),
+        header(),
+        height(),
+        paymentView(),
+        textField("Ghi chú", _editingNoteController),
+        height(),
+      ],
+    );
+  }
+
+  Widget viewCreate() {
+    return Column(
+      children: [
+        height(),
+        textField("Tên khách hàng", _editingFullNameController),
+        height(),
+        textField("Số điện thoại", _editingPhoneNumberController),
+        height(),
+        textField("Địa chỉ", _editingAddressController),
+        height(),
+        textFieldTap("Tên hàng", true),
+        height(),
+        viewChungLoaiDVT(),
+        height(),
+        viewSoLuongDonGia(),
+        height(),
+        textField("Tổng tiền", _editingProductTotalMoneyController,
+            isNotEdit: true),
+        height(),
+        header(),
+        height(),
+        paymentView(),
+        textField("Ghi chú", _editingNoteController),
+        height(),
+      ],
     );
   }
 
@@ -159,8 +201,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingProductUnitController.text = product.unit!;
       _editingProductPriceController.text = product.price.toString();
       _productId = product.id;
-      if (_editingProductAmountController.text.isNotEmpty){
-        _editingProductTotalMoneyController.text = (int.parse(_editingProductAmountController.text) * int.parse(_editingProductPriceController.text)).toString();
+      if (_editingProductAmountController.text.isNotEmpty) {
+        _editingProductTotalMoneyController.text =
+            (int.parse(_editingProductAmountController.text) *
+                    int.parse(_editingProductPriceController.text))
+                .toString();
       }
     }
   }
@@ -237,15 +282,74 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     );
   }
 
-  Widget textFieldTap(String label) {
+  void pickStatus() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    const Center(
+                      child: Text(
+                        "Chọn trạng thái cập nhật",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.grey.shade200,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _status = Status.CONFIRM;
+                        _editingStatusController.text = "Duyệt đơn";
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("Duyệt đơn"),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _status = Status.CANCEL;
+                        _editingStatusController.text = "Huỷ đơn";
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text("Huỷ đơn"),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  Widget textFieldTap(String label, bool isProduct) {
     return InkWell(
-      onTap: () => {chooseProduct()},
+      onTap: () => {
+        isProduct == true ? chooseProduct() : pickStatus(),
+      },
       child: IgnorePointer(
         child: TextFormField(
           decoration: InputDecoration(
               labelText: label,
               suffixIcon: const Icon(FontAwesomeIcons.angleDown)),
-          controller: _editingProductNameController,
+          controller: isProduct == true
+              ? _editingProductNameController
+              : _editingStatusController,
         ),
       ),
     );
@@ -372,13 +476,19 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     int productId = _productId;
     int orderId = _orderId;
     String amount = _editingProductAmountController.text;
+    int status = 0;
+    if (_status == Status.CONFIRM){
+      status = 1;
+    }else{
+      status = 4;
+    }
 
     switch (_typeAction) {
       case TypeAction.EDIT:
         if (name.isEmpty ||
             phone.isEmpty ||
             address.isEmpty ||
-            amount.isEmpty) {
+            amount.isEmpty || status == 0) {
           _orderProvider.showAlert('Vui lòng nhập đầy đủ thông tin!');
           return;
         } else {
@@ -393,7 +503,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
               } else {
                 if (_editingProductTotalMoneyController.text.isNotEmpty) {
                   int totalAmount =
-                  int.parse(_editingProductTotalMoneyController.text);
+                      int.parse(_editingProductTotalMoneyController.text);
                   int tamUng = int.parse(advanceMoney);
                   int thuHo = int.parse(collectMoney);
                   if (tamUng + thuHo < totalAmount) {
@@ -407,7 +517,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           }
         }
         _orderProvider.updateOrder(name, phone, address, moneyType,
-            advanceMoney, collectMoney, note, productId, amount, orderId);
+            advanceMoney, collectMoney, note, productId, amount, orderId, status);
         break;
       case TypeAction.ADD:
         if (name.isEmpty ||
@@ -453,21 +563,27 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     _editingPhoneNumberController.text = order.phone;
     _editingAddressController.text = order.address;
     _editingProductNameController.text = order.orderDetails.first.product.name!;
-    _editingProductTypeController.text = order.orderDetails.first.product.species!;
+    _editingProductTypeController.text =
+        order.orderDetails.first.product.species!;
     _editingProductUnitController.text = order.orderDetails.first.product.unit!;
-    _editingProductAmountController.text = order.orderDetails.first.quantity.toString();
-    _editingProductPriceController.text = order.orderDetails.first.product.price.toString();
-    if (order.note != null){
+    _editingProductAmountController.text =
+        order.orderDetails.first.quantity.toString();
+    _editingProductPriceController.text =
+        order.orderDetails.first.product.price.toString();
+    if (order.note != null) {
       _editingNoteController.text = order.note!;
-    }else{
+    } else {
       _editingNoteController.text = "";
     }
-    _editingProductTotalMoneyController.text = (int.parse(_editingProductAmountController.text) * int.parse(_editingProductPriceController.text)).toString();
-    if (order.moneyType == 1){
+    _editingProductTotalMoneyController.text =
+        (int.parse(_editingProductAmountController.text) *
+                int.parse(_editingProductPriceController.text))
+            .toString();
+    if (order.moneyType == 1) {
       _typePay = TypePay.PAID;
       _editingTamUngController.text = "0";
       _editingThuHoController.text = "0";
-    }else{
+    } else {
       _editingTamUngController.text = order.advanceMoney.toString();
       _editingThuHoController.text = order.collectMoney.toString();
       _typePay = TypePay.PAYLATER;
