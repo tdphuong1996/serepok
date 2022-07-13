@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
               Routes.ADD_PRODUCT: (context) =>  AddProductScreen(ModalRoute.of(context)!.settings.arguments as ProductModel?),
               Routes.CREATE_ORDER: (context) =>  CreateOrderScreen(ModalRoute.of(context)!.settings.arguments as OrderModel?),
               Routes.LIST_PRODUCT: (context) =>  ListProductScreen(ModalRoute.of(context)!.settings.arguments as String?),
-              Routes.DON_CHO_SCREEN: (context) =>  const DonChoScreen(),
+              Routes.DON_CHO_SCREEN: (context) =>  const DonChoScreen(OrderType.PENDING),
               Routes.COMMON_SCREEN: (context) =>
                   const CommonWidgetPage(title: "Common"),
             },

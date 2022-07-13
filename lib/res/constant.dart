@@ -21,14 +21,10 @@ class Constant {
   static const PREF_USER = "PREF_USER";
 }
 
-enum TypeAction {
-  EDIT,ADD
-}
+enum TypeAction { EDIT, ADD }
 
-enum TypeActionList {
-  SELECT,ADDEDIT
-}
+enum TypeActionList { SELECT, ADDEDIT }
 
-enum TypePay {
-  PAID,PAYLATER
-}
+enum TypePay { PAID, PAYLATER }
+
+enum OrderType { PENDING, APPROVED }

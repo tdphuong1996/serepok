@@ -5,7 +5,10 @@ import 'package:serepok/res/AppThemes.dart';
 import 'package:serepok/ui/sale/createorder/create_order_screen.dart';
 import 'package:serepok/ui/sale/donchodonchot/don_cho_screen.dart';
 
+import '../../res/constant.dart';
 import '../../routes.dart';
+import '../home/common_widget_screen.dart';
+import 'empty_screen.dart';
 
 class SaleScreen extends StatefulWidget {
   const SaleScreen({Key? key}) : super(key: key);
@@ -36,9 +39,9 @@ class _SaleScreenState extends State<SaleScreen> {
         createdAt: "",
         updatedAt: "",
         orderDetails: <OrderDetail>[])),
-    const DonChoScreen(),
-    const DonChoScreen(),
-    const DonChoScreen(),
+    const DonChoScreen(OrderType.PENDING),
+    const DonChoScreen(OrderType.APPROVED),
+    const EmptyScreen(),
   ];
 
   @override

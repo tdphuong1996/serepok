@@ -11,26 +11,49 @@ class OrderProvider extends BaseProvider {
   final OrderRepository _orderRepository = OrderRepository();
   Function? createOrderSuccessCallback;
   Function? updateOrderSuccessCallback;
-  List<OrderModel> listOrder = [];
+  List<OrderModel> listOrderPending = [];
+  List<OrderModel> listOrderApproved = [];
   late int _status;
 
-  Future<void> getListOrder() async {
+  Future<void> getListOrderPending() async {
     showLoading();
     try {
-      final response = await _orderRepository.getListOrder(pageNumber);
-      handleDataList(response);
+      final response = await _orderRepository.getListOrderPending(pageNumber);
+      handleDataListPending(response);
       hideLoading();
     } on Exception catch (error) {
       handleErrors(error);
     }
   }
 
-  FutureOr handleDataList(PagingResponseModel<OrderModel> data) async {
+  Future<void> getListOrderApproved() async {
+    showLoading();
+    try {
+      final response = await _orderRepository.getListOrderApproved(pageNumber);
+      handleDataListApproved(response);
+      hideLoading();
+    } on Exception catch (error) {
+      handleErrors(error);
+    }
+  }
+
+  FutureOr handleDataListPending(PagingResponseModel<OrderModel> data) async {
     if(isRefresh){
       isRefresh=  false;
-      listOrder.clear();
+      listOrderPending.clear();
     }
-    listOrder.addAll(data.data);
+    listOrderPending.addAll(data.data);
+    isCanLoadMore = pageNumber < data.lastPage;
+    notifyListeners();
+    hideLoading();
+  }
+
+  FutureOr handleDataListApproved(PagingResponseModel<OrderModel> data) async {
+    if(isRefresh){
+      isRefresh=  false;
+      listOrderApproved.clear();
+    }
+    listOrderApproved.addAll(data.data);
     isCanLoadMore = pageNumber < data.lastPage;
     notifyListeners();
     hideLoading();
@@ -67,6 +90,11 @@ class OrderProvider extends BaseProvider {
     });
 
     _orderRepository.createOrder(formData).then(createOrderSuccess).onError(handleError);
+  }
+
+  void dispose() {
+    listOrderPending = [];
+    listOrderApproved = [];
   }
 
   void updateOrder(
@@ -114,12 +142,10 @@ class OrderProvider extends BaseProvider {
       'status': _status,
     });
     _orderRepository.updateOrderStatus((formData), orderModel.id).then(updateStatusSuccess).onError(handleError);
-    showAlert('Cập nhật đơn hàng thành công');
-    updateOrderSuccessCallback?.call();
-    hideLoading();
   }
 
   FutureOr updateStatusSuccess(l){
+    updateOrderSuccessCallback?.call();
     hideLoading();
   }
 }

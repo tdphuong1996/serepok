@@ -69,7 +69,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _orderProvider.context = context;
       _orderProvider.createOrderSuccessCallback = resetData;
       _orderProvider.updateOrderSuccessCallback = () {
-        Navigator.pop(context, "update_product_success");
+        Navigator.pop(context, "update_order_success");
       };
       if (widget._orderModel?.id != 0) {
         _typeAction = TypeAction.EDIT;

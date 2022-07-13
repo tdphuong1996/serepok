@@ -5,13 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/order_model.dart';
+import 'package:serepok/res/constant.dart';
 
 import '../../../res/AppThemes.dart';
 import '../../../routes.dart';
 import '../createorder/order_provider.dart';
 
 class DonChoScreen extends StatefulWidget {
-  const DonChoScreen({Key? key}) : super(key: key);
+  final OrderType _orderType;
+
+  const DonChoScreen(this._orderType, {Key? key}) : super(key: key);
 
   @override
   State<DonChoScreen> createState() => _DonChoScreenState();
@@ -22,15 +25,18 @@ class _DonChoScreenState extends State<DonChoScreen> {
   late ScrollController _controller;
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
+  OrderType? _orderTypeSetView;
 
   @override
   void initState() {
     super.initState();
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
     _orderProvider.context = context;
-    _orderProvider.getListOrder();
+    _orderProvider.getListOrderPending();
+    _orderProvider.getListOrderApproved();
     _controller = ScrollController();
     _controller.addListener(_loadMore);
+    _orderTypeSetView = widget._orderType;
   }
 
   @override
@@ -43,9 +49,13 @@ class _DonChoScreenState extends State<DonChoScreen> {
               onRefresh: _refresh,
               child: ListView.builder(
                 controller: _controller,
-                itemCount: _orderProvider.listOrder.length,
+                itemCount: _orderTypeSetView == OrderType.PENDING
+                    ? _orderProvider.listOrderPending.length
+                    : _orderProvider.listOrderApproved.length,
                 itemBuilder: (context, index) {
-                  return item(_orderProvider.listOrder[index]);
+                  return _orderTypeSetView == OrderType.PENDING
+                    ? item(_orderProvider.listOrderPending[index])
+                    : item(_orderProvider.listOrderApproved[index]);
                 },
               ),
             ),
@@ -81,7 +91,8 @@ class _DonChoScreenState extends State<DonChoScreen> {
               children: [
                 Row(
                   children: [
-                    itemInfo(FontAwesomeIcons.calendar, convertDatetime(orderModel.createdAt)),
+                    itemInfo(FontAwesomeIcons.calendar,
+                        convertDatetime(orderModel.createdAt)),
                     const SizedBox(width: 30),
                     itemInfo(FontAwesomeIcons.barcode, orderModel.code),
                   ],
@@ -89,8 +100,8 @@ class _DonChoScreenState extends State<DonChoScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                itemInfo(
-                    FontAwesomeIcons.circleInfo, '${orderModel.name} -  ${orderModel.phone}'),
+                itemInfo(FontAwesomeIcons.circleInfo,
+                    '${orderModel.name} -  ${orderModel.phone}'),
                 const SizedBox(
                   height: 8,
                 ),
@@ -110,18 +121,35 @@ class _DonChoScreenState extends State<DonChoScreen> {
   }
 
   Future<void> itemClick(OrderModel orderModel) async {
-    Navigator.pushNamed(context, Routes.CREATE_ORDER,
+    final result = await Navigator.pushNamed(context, Routes.CREATE_ORDER,
         arguments: orderModel);
+    if (result != null) {
+      showOkAlertDialog(
+          context: context, message: 'Cập nhật thông tin thành công');
+      _refresh();
+    }
   }
 
   Future<void> _refresh() async {
     _orderProvider.isRefresh = true;
     _orderProvider.pageNumber = 1;
-    await _orderProvider.getListOrder();
+    if (_orderTypeSetView == OrderType.PENDING){
+      await _orderProvider.getListOrderPending();
+    }else{
+      await _orderProvider.getListOrderApproved();
+    }
   }
-  String convertDatetime(String date){
-    String stringYear = date.substring(0,10);
-    String stringTime = date.substring(11,19);
+
+  @override
+  void dispose() {
+    _orderProvider.dispose();
+    _controller.removeListener(_loadMore);
+    super.dispose();
+  }
+
+  String convertDatetime(String date) {
+    String stringYear = date.substring(0, 10);
+    String stringTime = date.substring(11, 19);
     String result = '$stringYear $stringTime';
     return result;
   }
@@ -136,7 +164,11 @@ class _DonChoScreenState extends State<DonChoScreen> {
       _isLoading = true;
       _orderProvider.isLoadMore = true;
       _orderProvider.pageNumber++;
-      await _orderProvider.getListOrder();
+      if (_orderTypeSetView == OrderType.PENDING){
+        await _orderProvider.getListOrderPending();
+      }else{
+        await _orderProvider.getListOrderApproved();
+      }
       _isLoading = false;
       setState(() {
         _isLoadMoreRunning = false;

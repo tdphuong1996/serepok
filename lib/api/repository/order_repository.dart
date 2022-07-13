@@ -9,7 +9,7 @@ import '../apis.dart';
 class OrderRepository {
   final ApiClient _apiClient = ApiClient();
 
-  Future<PagingResponseModel<OrderModel>> getListOrder(
+  Future<PagingResponseModel<OrderModel>> getListOrderPending(
       int pageNumber) async {
     final dataResponse = await _apiClient
         .get<PagingResponseModel<OrderModel>>(Api.createOrder,
@@ -17,9 +17,17 @@ class OrderRepository {
     return dataResponse.handleData();
   }
 
-  Future createOrder(FormData formData) async {
+  Future<PagingResponseModel<OrderModel>> getListOrderApproved(
+      int pageNumber) async {
+    final dataResponse = await _apiClient
+        .get<PagingResponseModel<OrderModel>>(Api.createOrder,
+        param: {'page': pageNumber, 'status': 1});
+    return dataResponse.handleData();
+  }
+
+  Future<CreateModel> createOrder(FormData formData) async {
     final dataResponse =
-        await _apiClient.postFormData(Api.createOrder, formData);
+        await _apiClient.postFormData<CreateModel>(Api.createOrder, formData);
     return dataResponse.handleData();
   }
 
@@ -29,8 +37,8 @@ class OrderRepository {
     return dataResponse.handleData();
   }
 
-  Future updateOrderStatus(FormData formData, int id) async {
-    final dataResponse = await _apiClient.postFormData(
+  Future<OrderModel> updateOrderStatus(FormData formData, int id) async {
+    final dataResponse = await _apiClient.postFormData<OrderModel>(
         "${Api.updateOrderStatus}/$id", formData);
     return dataResponse.handleData();
   }

@@ -48,6 +48,9 @@ class BaseResponseModel<T> {
       else if (T == OrderModel) {
         return OrderModel.fromJson(json) as T;
       }
+      else if (T == CreateModel) {
+        return CreateModel.fromJson(json) as T;
+      }
     }
 
     throw ArgumentError.value(

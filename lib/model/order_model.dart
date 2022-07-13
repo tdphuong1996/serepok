@@ -1,5 +1,14 @@
 import 'package:serepok/model/product_model.dart';
 
+class CreateModel {
+
+  factory CreateModel.fromJson(Map<String, dynamic> json) {
+    return CreateModel();
+  }
+
+  CreateModel();
+}
+
 class OrderModel {
   int id;
   String code;
