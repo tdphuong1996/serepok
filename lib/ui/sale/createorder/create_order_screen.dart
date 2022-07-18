@@ -271,13 +271,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       controller: controller,
       keyboardType:
           isNumber == true ? TextInputType.number : TextInputType.text,
-      onFieldSubmitted: (text) => {
+      onChanged: (text) => {
         isCalculate == true
             ? _editingProductTotalMoneyController.text =
-                (int.parse(_editingProductAmountController.text) *
-                        int.parse(_editingProductPriceController.text))
-                    .toString()
-            : controller.text = text
+            (int.parse(_editingProductAmountController.text) *
+                int.parse(_editingProductPriceController.text))
+                .toString()
+            : {}
       },
     );
   }
@@ -606,6 +606,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingThuHoController,
       _editingProductAmountController,
       _editingProductPriceController,
+      _editingProductTotalMoneyController
     ];
     for (var element in controllers) {
       element.text = "";

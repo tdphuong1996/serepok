@@ -5,6 +5,7 @@ class Api {
   static const updateStaff = "manager/staff/update";
   static const createProduct = "manager/product";
   static const updateProduct = "manager/product/update";
+  static const deleteProduct = "manager/product/delete";
   static const updateOrder = "manager/order/update";
   static const updateOrderStatus = "manager/order/update-status";
   static const createOrder = "manager/order";

@@ -8,12 +8,14 @@ import 'package:serepok/model/product_model.dart';
 import 'package:serepok/res/constant.dart';
 
 import '../../../api/repository/product_repository.dart';
+import '../../../model/order_model.dart';
 
 class ProductProvider extends BaseProvider {
   final ProductRepository _repository = ProductRepository();
   List<ProductModel> listProduct = [];
   Function? createProductSuccessCallback;
   Function? updateProductSuccessCallback;
+  Function? deleteProductSuccessCallback;
 
   Future<void> getListProduct() async {
     showLoading();
@@ -119,6 +121,15 @@ class ProductProvider extends BaseProvider {
         .onError(handleError);
   }
 
+  void deleteProduct(
+      int id) async {
+    showLoading();
+    _repository
+        .deleteProduct(id)
+        .then(deleteProductSuccess)
+        .onError(handleError);
+  }
+
   FutureOr createProductSuccess(ProductModel value) {
     showAlert('Tạo sản phẩm thành thành công');
     createProductSuccessCallback?.call();
@@ -127,6 +138,11 @@ class ProductProvider extends BaseProvider {
 
   FutureOr updateProductSuccess(ProductModel value) {
     updateProductSuccessCallback?.call();
+    hideLoading();
+  }
+
+  FutureOr deleteProductSuccess(List<CreateModel> value) {
+    deleteProductSuccessCallback?.call();
     hideLoading();
   }
 }

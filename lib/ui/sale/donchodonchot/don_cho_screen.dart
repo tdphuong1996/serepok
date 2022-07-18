@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -32,11 +33,14 @@ class _DonChoScreenState extends State<DonChoScreen> {
     super.initState();
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
     _orderProvider.context = context;
-    _orderProvider.getListOrderPending();
-    _orderProvider.getListOrderApproved();
     _controller = ScrollController();
     _controller.addListener(_loadMore);
     _orderTypeSetView = widget._orderType;
+    if(_orderTypeSetView == OrderType.PENDING){
+      _orderProvider.getListOrderPending();
+    }else{
+      _orderProvider.getListOrderApproved();
+    }
   }
 
   @override
@@ -100,8 +104,11 @@ class _DonChoScreenState extends State<DonChoScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                itemInfo(FontAwesomeIcons.circleInfo,
-                    '${orderModel.name} -  ${orderModel.phone}'),
+                InkWell(
+                  onTap: () {launch("tel://${orderModel.phone}");},
+                  child: itemInfo(FontAwesomeIcons.circleInfo,
+                      '${orderModel.name} -  ${orderModel.phone}'),
+                ),
                 const SizedBox(
                   height: 8,
                 ),

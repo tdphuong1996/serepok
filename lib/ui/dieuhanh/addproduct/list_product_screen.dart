@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:serepok/model/product_model.dart';
+import 'package:serepok/res/AppThemes.dart';
 
 import '../../../res/constant.dart';
 import '../../../res/view.dart';
@@ -12,7 +13,7 @@ import 'add_product_provider.dart';
 class ListProductScreen extends StatefulWidget {
   final String? _type;
 
-  const ListProductScreen(this._type,  {Key? key}) : super(key: key);
+  const ListProductScreen(this._type, {Key? key}) : super(key: key);
 
   @override
   State<ListProductScreen> createState() => _ListProductScreenState();
@@ -25,7 +26,6 @@ class _ListProductScreenState extends State<ListProductScreen> {
   bool _isLoading = false;
   TypeActionList _typeAction = TypeActionList.SELECT;
 
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +34,14 @@ class _ListProductScreenState extends State<ListProductScreen> {
     _productProvider.getListProduct();
     _controller = ScrollController();
     _controller.addListener(_loadMore);
-    _typeAction = widget._type == "SELECT" ? _typeAction = TypeActionList.SELECT : TypeActionList.ADDEDIT;
+    _productProvider.deleteProductSuccessCallback = () {
+      showOkAlertDialog(
+          context: context, message: 'Xoá sản phẩm thành công!');
+      _refresh();
+    };
+    _typeAction = widget._type == "SELECT"
+        ? _typeAction = TypeActionList.SELECT
+        : TypeActionList.ADDEDIT;
   }
 
   @override
@@ -71,9 +78,9 @@ class _ListProductScreenState extends State<ListProductScreen> {
   }
 
   Future<void> itemClick(ProductModel product) async {
-    if(_typeAction == TypeActionList.SELECT){
+    if (_typeAction == TypeActionList.SELECT) {
       itemProductClick(product);
-    }else{
+    } else {
       final result = await Navigator.pushNamed(context, Routes.ADD_PRODUCT,
           arguments: product);
       if (result != null) {
@@ -90,7 +97,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
 
   Widget item(ProductModel product) {
     return InkWell(
-      onTap: () => {itemClick(product)},
+      onTap: () => {},
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Row(
@@ -105,10 +112,22 @@ class _ListProductScreenState extends State<ListProductScreen> {
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(product.name!),
+                  const Spacer(), // I just added one line
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: InkWell(
+                        onTap: () => {itemClick(product)},
+                        child: const Icon(Icons.edit,
+                            color: MyColor.PRIMARY_COLOR)),
+                  ),
+                  InkWell(
+                      onTap: () => {deleteProduct(product.id, context)},
+                      child: const Icon(Icons.delete,
+                          color: MyColor.PRIMARY_COLOR))
                 ],
               ),
             )),
@@ -122,6 +141,45 @@ class _ListProductScreenState extends State<ListProductScreen> {
   void dispose() {
     _productProvider.listProduct = [];
     super.dispose();
+  }
+
+  void deleteProduct(int id, BuildContext context) {
+    showAlertDialog(context, id);
+  }
+
+  showAlertDialog(BuildContext context, int id) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: const Text("Huỷ"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: const Text("Xoá sản phẩm"),
+      onPressed: () {
+        _productProvider.deleteProduct(id);
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Cảnh báo!"),
+      content: const Text("Bạn có chắc muốn xoá sản phẩm này?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   Future<void> _refresh() async {

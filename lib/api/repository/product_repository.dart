@@ -5,6 +5,7 @@ import 'package:serepok/model/staff.dart';
 import 'package:serepok/model/user.dart';
 
 import '../../model/base_response_model.dart';
+import '../../model/order_model.dart';
 import '../../model/paging_respone_model.dart';
 import '../../model/product_model.dart';
 
@@ -28,6 +29,12 @@ class ProductRepository {
   Future<ProductModel> updateProduct(FormData formData, int id) async {
     final dataResponse = await _apiClient.postFormData<ProductModel>(
         "${Api.updateProduct}/$id", formData);
+    return dataResponse.handleData();
+  }
+
+  Future<List<CreateModel>> deleteProduct(int id) async {
+    final dataResponse = await _apiClient.get<List<CreateModel>>(
+        "${Api.deleteProduct}/$id");
     return dataResponse.handleData();
   }
 }
