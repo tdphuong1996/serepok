@@ -25,6 +25,22 @@ class OrderRepository {
     return dataResponse.handleData();
   }
 
+  Future<PagingResponseModel<OrderModel>> getListOrderComplete(
+      int pageNumber) async {
+    final dataResponse = await _apiClient
+        .get<PagingResponseModel<OrderModel>>(Api.createOrder,
+        param: {'page': pageNumber, 'status': 3});
+    return dataResponse.handleData();
+  }
+
+  Future<PagingResponseModel<OrderModel>> getListOrderShipping(
+      int pageNumber) async {
+    final dataResponse = await _apiClient
+        .get<PagingResponseModel<OrderModel>>(Api.createOrder,
+        param: {'page': pageNumber, 'status': 2});
+    return dataResponse.handleData();
+  }
+
   Future<CreateModel> createOrder(FormData formData) async {
     final dataResponse =
         await _apiClient.postFormData<CreateModel>(Api.createOrder, formData);

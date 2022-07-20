@@ -14,6 +14,7 @@ import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/list_product_screen.dart';
+import 'package:serepok/ui/dieuhanh/transport_screen.dart';
 import 'package:serepok/ui/home/common_widget_screen.dart';
 import 'package:serepok/ui/sale/createorder/choose_product_screen.dart';
 import 'package:serepok/ui/sale/createorder/create_order_screen.dart';
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
               Routes.LOGIN_SCREEN: (context) => const LoginScreen(),
               Routes.ADD_EMPLOYEE: (context) =>  AddEmployeeScreen(ModalRoute.of(context)!.settings.arguments as StaffModel),
               Routes.SALE_SCREEN: (context) => const SaleScreen(),
+              Routes.TRANSPORT_SCREEN: (context) => const TransportScreen(),
               Routes.CHOOSE_PRODUCT: (context) => const ChooseProductScreen(),
               Routes.ADD_PRODUCT: (context) =>  AddProductScreen(ModalRoute.of(context)!.settings.arguments as ProductModel?),
               Routes.CREATE_ORDER: (context) =>  CreateOrderScreen(ModalRoute.of(context)!.settings.arguments as OrderModel?),

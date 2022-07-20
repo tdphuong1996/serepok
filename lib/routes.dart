@@ -11,5 +11,6 @@ class Routes {
   static const  LIST_PRODUCT = "LIST_PRODUCT";
   static const  DON_CHO_SCREEN = "DON_CHO_SCREEN";
   static const  CREATE_ORDER = "CREATE_ORDER";
+  static const  TRANSPORT_SCREEN = "TRANSPORT_SCREEN";
 
 }

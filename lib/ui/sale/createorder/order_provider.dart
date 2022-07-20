@@ -13,6 +13,8 @@ class OrderProvider extends BaseProvider {
   Function? updateOrderSuccessCallback;
   List<OrderModel> listOrderPending = [];
   List<OrderModel> listOrderApproved = [];
+  List<OrderModel> listOrderComplete = [];
+  List<OrderModel> listOrderShipping = [];
   late int _status;
 
   Future<void> getListOrderPending() async {
@@ -35,6 +37,50 @@ class OrderProvider extends BaseProvider {
     } on Exception catch (error) {
       handleErrors(error);
     }
+  }
+
+  Future<void> getListOrderComplete() async {
+    showLoading();
+    try {
+      final response = await _orderRepository.getListOrderComplete(pageNumber);
+      handleDataListComplete(response);
+      hideLoading();
+    } on Exception catch (error) {
+      handleErrors(error);
+    }
+  }
+
+  Future<void> getListOrderShipping() async {
+    showLoading();
+    try {
+      final response = await _orderRepository.getListOrderShipping(pageNumber);
+      handleDataListShipping(response);
+      hideLoading();
+    } on Exception catch (error) {
+      handleErrors(error);
+    }
+  }
+
+  FutureOr handleDataListShipping(PagingResponseModel<OrderModel> data) async {
+    if(isRefresh){
+      isRefresh=  false;
+      listOrderShipping.clear();
+    }
+    listOrderShipping.addAll(data.data);
+    isCanLoadMore = pageNumber < data.lastPage;
+    notifyListeners();
+    hideLoading();
+  }
+
+  FutureOr handleDataListComplete(PagingResponseModel<OrderModel> data) async {
+    if(isRefresh){
+      isRefresh=  false;
+      listOrderComplete.clear();
+    }
+    listOrderComplete.addAll(data.data);
+    isCanLoadMore = pageNumber < data.lastPage;
+    notifyListeners();
+    hideLoading();
   }
 
   FutureOr handleDataListPending(PagingResponseModel<OrderModel> data) async {
