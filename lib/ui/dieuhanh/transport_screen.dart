@@ -6,6 +6,7 @@ import 'package:serepok/ui/dieuhanh/transport/complete_order_screen.dart';
 import 'package:serepok/ui/dieuhanh/transport/transport_order_screen.dart';
 
 import '../../res/AppThemes.dart';
+import '../../routes.dart';
 import '../sale/empty_screen.dart';
 
 class TransportScreen extends StatefulWidget{
@@ -20,7 +21,7 @@ class _TransportScreen extends State<TransportScreen>{
   static final List<Widget> _listPage = <Widget>[
     const ApprovedOrderScreen(),
     const TransportOrderScreen(),
-    const CompleteOrderScreen(),
+    const EmptyScreen(),
   ];
 
   @override
@@ -36,7 +37,7 @@ class _TransportScreen extends State<TransportScreen>{
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index == 3) {
+      if (index == 2) {
         Navigator.pop(context);
       }
     });
@@ -57,7 +58,7 @@ class _TransportScreen extends State<TransportScreen>{
               width: 30,
               child: InkWell(
                 child: const Icon(FontAwesomeIcons.qrcode),
-                onTap: () => {_scanQRCode()},
+                onTap: () => {Navigator.of(context).pushNamed(Routes.QR_CODE_SCREEN)},
               ),
             ),
           )
@@ -71,15 +72,15 @@ class _TransportScreen extends State<TransportScreen>{
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.hourglassEnd),
-            label: 'Đơn chốt',
+            label: 'Đơn chờ vận chuyển',
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.truckFast),
             label: 'Đơn đang vận chuyển',
           ),
           BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.noteSticky),
-            label: 'Đơn hoàn thành',
+            icon: Icon(FontAwesomeIcons.house),
+            label: 'Trang chủ',
           ),
         ],
         currentIndex: _selectedIndex,

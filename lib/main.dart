@@ -14,6 +14,8 @@ import 'package:serepok/ui/dieuhanh/addemployee/staff_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_provider.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/add_product_screen.dart';
 import 'package:serepok/ui/dieuhanh/addproduct/list_product_screen.dart';
+import 'package:serepok/ui/dieuhanh/qr/enter_phone_transport_screen.dart';
+import 'package:serepok/ui/dieuhanh/qr/qr_code_screen.dart';
 import 'package:serepok/ui/dieuhanh/transport_screen.dart';
 import 'package:serepok/ui/home/common_widget_screen.dart';
 import 'package:serepok/ui/sale/createorder/choose_product_screen.dart';
@@ -94,6 +96,8 @@ class MyApp extends StatelessWidget {
               Routes.CREATE_ORDER: (context) =>  CreateOrderScreen(ModalRoute.of(context)!.settings.arguments as OrderModel?),
               Routes.LIST_PRODUCT: (context) =>  ListProductScreen(ModalRoute.of(context)!.settings.arguments as String?),
               Routes.DON_CHO_SCREEN: (context) =>  const DonChoScreen(OrderType.PENDING),
+              Routes.QR_CODE_SCREEN: (context) =>  const QRCodeScreen(),
+              Routes.ENTER_PHONE_TRANSPORT_SCREEN: (context) =>  EnterPhoneTransportScreen(ModalRoute.of(context)!.settings.arguments as String?),
               Routes.COMMON_SCREEN: (context) =>
                   const CommonWidgetPage(title: "Common"),
             },

@@ -21,7 +21,6 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
   late ScrollController _controller;
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
-  bool _isChoose = false;
   final List<OrderModel> _listOrderChoose = [];
 
   @override
@@ -46,7 +45,7 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                 controller: _controller,
                 itemCount: _orderProvider.listOrderApproved.length,
                 itemBuilder: (context, index) {
-                  return item(_orderProvider.listOrderApproved[index]);
+                  return item(_orderProvider.listOrderApproved[index], index);
                 },
               ),
             ),
@@ -67,7 +66,9 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     });
   }
 
-  Widget item(OrderModel orderModel) {
+  Widget item(OrderModel orderModel, int index) {
+
+    bool _isChoose = false;
     return InkWell(
       onTap: () => {itemClick(orderModel)},
       child: Padding(

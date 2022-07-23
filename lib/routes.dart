@@ -12,5 +12,7 @@ class Routes {
   static const  DON_CHO_SCREEN = "DON_CHO_SCREEN";
   static const  CREATE_ORDER = "CREATE_ORDER";
   static const  TRANSPORT_SCREEN = "TRANSPORT_SCREEN";
+  static const  QR_CODE_SCREEN = "QR_CODE_SCREEN";
+  static const  ENTER_PHONE_TRANSPORT_SCREEN = "ENTER_PHONE_TRANSPORT_SCREEN";
 
 }
