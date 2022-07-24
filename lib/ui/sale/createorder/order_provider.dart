@@ -11,6 +11,7 @@ class OrderProvider extends BaseProvider {
   final OrderRepository _orderRepository = OrderRepository();
   Function? createOrderSuccessCallback;
   Function? updateOrderSuccessCallback;
+  Function? pullShipSuccessCallback;
   List<OrderModel> listOrderPending = [];
   List<OrderModel> listOrderApproved = [];
   List<OrderModel> listOrderComplete = [];
@@ -139,11 +140,6 @@ class OrderProvider extends BaseProvider {
     _orderRepository.createOrder(formData).then(createOrderSuccess).onError(handleError);
   }
 
-  void dispose() {
-    listOrderPending = [];
-    listOrderApproved = [];
-  }
-
   void updateOrder(
       String name,
       String phone,
@@ -172,16 +168,40 @@ class OrderProvider extends BaseProvider {
       'advance_money': tamUng,
       'collect_money': thuHo,
       'note': note,
-      'number_box': int.parse(amountBox),
+      'note': note,
       paramId: int.parse(amount)
     });
     _status = status;
     _orderRepository.updateOrder(formData, orderId).then(updateOrderSuccess).onError(handleError);
   }
 
+  void dispose() {
+    listOrderPending = [];
+    listOrderApproved = [];
+    listOrderComplete = [];
+    listOrderShipping = [];
+  }
+
+  void pullShipOrder(
+      List<int> listId,
+      String phone,
+      ) async{
+    showLoading();
+    var formData = FormData.fromMap({
+      'ids': listId,
+      'phone': phone
+    });
+    _orderRepository.pullShipOrder(formData).then(pullShipOrderSuccess).onError(handleError);
+  }
+
   FutureOr createOrderSuccess(l){
     showAlert('Tạo đơn hàng thành công');
     createOrderSuccessCallback?.call();
+    hideLoading();
+  }
+
+  FutureOr pullShipOrderSuccess(l){
+    pullShipSuccessCallback?.call();
     hideLoading();
   }
 

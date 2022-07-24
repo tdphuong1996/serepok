@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/order_model.dart';
 import '../../../res/AppThemes.dart';
+import '../../../routes.dart';
 import '../../sale/createorder/order_provider.dart';
 
 class ApprovedOrderScreen extends StatefulWidget {
@@ -40,6 +41,26 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     return Consumer<OrderProvider>(builder: (context, value, child) {
       return Column(
         children: [
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CupertinoButton(
+                  color: MyColor.PRIMARY_COLOR,
+                  onPressed: () {
+                    if (_listOrderChoose.isEmpty) {
+                      showOkAlertDialog(
+                          context: context,
+                          message:
+                              'Vui lòng chọn ít nhất 1 đơn hàng để đẩy ship!');
+                    } else {_pullShip();}},
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  padding: const EdgeInsets.only(
+                      top: 8, left: 32, right: 32, bottom: 8),
+                  pressedOpacity: 0.5,
+                  child: const Text('Đẩy ship')),
+            ),
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _refresh,
@@ -86,17 +107,21 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                     Checkbox(
                         checkColor: Colors.white,
                         activeColor: MyColor.PRIMARY_COLOR,
-                        value: _listOrderChoose.contains(orderModel) ? true : false,
+                        value: _listOrderChoose.contains(orderModel)
+                            ? true
+                            : false,
                         onChanged: (bool? value) {
                           if (value == true) {
                             _listOrderChoose.add(orderModel);
                           } else {
                             _listOrderChoose.remove(orderModel);
                           }
-                          setState(() =>
-                          {
-                            _isChoose = _listOrderChoose.contains(orderModel) ? true : false,
-                          });
+                          setState(() => {
+                                _isChoose =
+                                    _listOrderChoose.contains(orderModel)
+                                        ? true
+                                        : false,
+                              });
                         }),
                     Text(
                       orderModel.code,
@@ -154,6 +179,18 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     _orderProvider.dispose();
     _controller.removeListener(_loadMore);
     super.dispose();
+  }
+
+  void _pullShip() async {
+    final result = await Navigator.of(context).pushNamed(
+        Routes.ENTER_PHONE_TRANSPORT_SCREEN,
+        arguments: _listOrderChoose);
+    if (result != null) {
+      showOkAlertDialog(
+          context: context,
+          message:
+          'Đã đẩy ship thành công!');
+    }
   }
 
   void _loadMore() async {

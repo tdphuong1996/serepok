@@ -47,6 +47,12 @@ class OrderRepository {
     return dataResponse.handleData();
   }
 
+  Future<CreateModel> pullShipOrder(FormData formData) async {
+    final dataResponse =
+    await _apiClient.postFormData<CreateModel>(Api.pullShip, formData);
+    return dataResponse.handleData();
+  }
+
   Future<OrderModel> updateOrder(FormData formData, int id) async {
     final dataResponse = await _apiClient.postFormData<OrderModel>(
         "${Api.updateOrder}/$id", formData);

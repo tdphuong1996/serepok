@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:serepok/model/order_model.dart';
 import 'package:serepok/ui/dieuhanh/transport/approved_order_screen.dart';
 import 'package:serepok/ui/dieuhanh/transport/complete_order_screen.dart';
 import 'package:serepok/ui/dieuhanh/transport/transport_order_screen.dart';
 
 import '../../res/AppThemes.dart';
 import '../../routes.dart';
+import '../sale/createorder/order_provider.dart';
 import '../sale/empty_screen.dart';
 
 class TransportScreen extends StatefulWidget{
@@ -17,6 +20,7 @@ class TransportScreen extends StatefulWidget{
 }
 
 class _TransportScreen extends State<TransportScreen>{
+  late OrderProvider _orderProvider;
   int _selectedIndex = 0;
   static final List<Widget> _listPage = <Widget>[
     const ApprovedOrderScreen(),
@@ -27,6 +31,9 @@ class _TransportScreen extends State<TransportScreen>{
   @override
   void initState() {
     super.initState();
+    _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    _orderProvider.context = context;
+    _orderProvider.getListOrderApproved();
   }
 
   @override
@@ -44,11 +51,16 @@ class _TransportScreen extends State<TransportScreen>{
   }
 
   void _showQRScan() async {
-    ;
     final result = await Navigator.of(context).pushNamed(Routes.QR_CODE_SCREEN);
     if (result != null) {
-      Navigator.of(context).pushNamed(Routes.ENTER_PHONE_TRANSPORT_SCREEN,
-              arguments: result);
+      for (var order in _orderProvider.listOrderApproved) {
+        if (result.toString() == order.code){
+          List<OrderModel> listTemp = [];
+          listTemp.add(order);
+          Navigator.of(context).pushNamed(Routes.ENTER_PHONE_TRANSPORT_SCREEN,
+              arguments: listTemp);
+        }
+      }
     }
   }
 
@@ -99,6 +111,4 @@ class _TransportScreen extends State<TransportScreen>{
       ),
     );
   }
-
-  void _scanQRCode(){}
 }

@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:serepok/model/order_model.dart';
 
 import '../../../res/AppThemes.dart';
+import '../../sale/createorder/order_provider.dart';
 
 class EnterPhoneTransportScreen extends StatefulWidget {
-  final String? _orderCode;
+  final List<OrderModel>? _listOrder;
 
-  const EnterPhoneTransportScreen(this._orderCode, {Key? key}) : super(key: key);
+  const EnterPhoneTransportScreen(this._listOrder, {Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EnterPhoneTransportScreen();
@@ -15,11 +18,29 @@ class EnterPhoneTransportScreen extends StatefulWidget {
 
 class _EnterPhoneTransportScreen extends State<EnterPhoneTransportScreen> {
   final _editingTransportController = TextEditingController();
+  List<String> _listOrderCode = [];
+  List<int> _listOrderId = [];
+  late OrderProvider _orderProvider;
 
 
   @override
   void initState() {
     super.initState();
+    try {
+      _orderProvider = Provider.of<OrderProvider>(context, listen: false);
+      _orderProvider.context = context;
+      _orderProvider.pullShipSuccessCallback = () {
+        Navigator.pop(context, "pull_ship_order_success");
+      };
+    } on Exception catch (error) {
+      debugPrint('loi neeeeeee: $error');
+    }
+    if (widget._listOrder != null){
+      for (var order in widget._listOrder!) {
+        _listOrderCode.add(order.code);
+        _listOrderId.add(order.id);
+      }
+    }
   }
 
   @override
@@ -46,7 +67,7 @@ class _EnterPhoneTransportScreen extends State<EnterPhoneTransportScreen> {
                     child: CupertinoButton(
                         color: MyColor.PRIMARY_COLOR,
                         onPressed: () {
-                          //call api đẩy ship
+                          _orderProvider.pullShipOrder(_listOrderId, _editingTransportController.text);
                         },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(8)),
@@ -65,7 +86,7 @@ class _EnterPhoneTransportScreen extends State<EnterPhoneTransportScreen> {
   Widget mainView() {
     return Column(
       children: [
-        itemInfo(FontAwesomeIcons.barcode, widget._orderCode!),
+        itemInfo(FontAwesomeIcons.barcode, _listOrderCode.toString()),
         height(),
         textField('Nhập Sđt nhà vận chuyển', _editingTransportController),
         height()

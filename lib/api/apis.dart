@@ -9,4 +9,5 @@ class Api {
   static const updateOrder = "manager/order/update";
   static const updateOrderStatus = "manager/order/update-status";
   static const createOrder = "manager/order";
+  static const pullShip = "manager/order/update-phone";
 }

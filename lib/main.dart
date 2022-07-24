@@ -97,7 +97,7 @@ class MyApp extends StatelessWidget {
               Routes.LIST_PRODUCT: (context) =>  ListProductScreen(ModalRoute.of(context)!.settings.arguments as String?),
               Routes.DON_CHO_SCREEN: (context) =>  const DonChoScreen(OrderType.PENDING),
               Routes.QR_CODE_SCREEN: (context) =>  const QRCodeScreen(),
-              Routes.ENTER_PHONE_TRANSPORT_SCREEN: (context) =>  EnterPhoneTransportScreen(ModalRoute.of(context)!.settings.arguments as String?),
+              Routes.ENTER_PHONE_TRANSPORT_SCREEN: (context) =>  EnterPhoneTransportScreen(ModalRoute.of(context)!.settings.arguments as List<OrderModel>?),
               Routes.COMMON_SCREEN: (context) =>
                   const CommonWidgetPage(title: "Common"),
             },
