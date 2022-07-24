@@ -46,6 +46,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       TextEditingController();
   final TextEditingController _editingProductAmountController =
       TextEditingController();
+  final TextEditingController _editingProductBoxController =
+  TextEditingController();
   final TextEditingController _editingProductPriceController =
       TextEditingController();
   final TextEditingController _editingProductTotalMoneyController =
@@ -152,8 +154,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         height(),
         textFieldTap("Trạng thái đơn hàng", false),
         height(),
-        textField("Tổng tiền", _editingProductTotalMoneyController,
-            isNotEdit: true),
+        viewSoThungTongTien(),
         height(),
         header(),
         height(),
@@ -180,8 +181,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         height(),
         viewSoLuongDonGia(),
         height(),
-        textField("Tổng tiền", _editingProductTotalMoneyController,
-            isNotEdit: true),
+        viewSoThungTongTien(),
         height(),
         header(),
         height(),
@@ -258,6 +258,24 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         Expanded(
             flex: 1,
             child: textField("Đơn giá", _editingProductPriceController,
+                isNotEdit: true))
+      ],
+    );
+  }
+
+  Widget viewSoThungTongTien() {
+    return Row(
+      children: [
+        Expanded(
+            flex: 1,
+            child: textField("Số thùng", _editingProductBoxController,
+                isCalculate: true, isNumber: true)),
+        const SizedBox(
+          width: 16,
+        ),
+        Expanded(
+            flex: 1,
+            child: textField("Tổng tiền", _editingProductTotalMoneyController,
                 isNotEdit: true))
       ],
     );
@@ -476,6 +494,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     int productId = _productId;
     int orderId = _orderId;
     String amount = _editingProductAmountController.text;
+    String amountBox = _editingProductBoxController.text;
     int status = 0;
     if (_status == Status.CONFIRM){
       status = 1;
@@ -517,7 +536,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           }
         }
         _orderProvider.updateOrder(name, phone, address, moneyType,
-            advanceMoney, collectMoney, note, productId, amount, orderId, status);
+            advanceMoney, collectMoney, note, productId, amount, orderId, status,amountBox);
         break;
       case TypeAction.ADD:
         if (name.isEmpty ||
@@ -552,13 +571,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           }
         }
         _orderProvider.createOrder(name, phone, address, moneyType,
-            advanceMoney, collectMoney, note, productId, amount);
+            advanceMoney, collectMoney, note, productId, amount,amountBox);
         break;
     }
   }
 
   void setDefaultData() {
     final order = widget._orderModel!;
+    _editingProductBoxController.text = order.numberBox.toString();
     _editingFullNameController.text = order.name;
     _editingPhoneNumberController.text = order.phone;
     _editingAddressController.text = order.address;
@@ -606,7 +626,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingThuHoController,
       _editingProductAmountController,
       _editingProductPriceController,
-      _editingProductTotalMoneyController
+      _editingProductTotalMoneyController,
+      _editingProductBoxController
     ];
     for (var element in controllers) {
       element.text = "";

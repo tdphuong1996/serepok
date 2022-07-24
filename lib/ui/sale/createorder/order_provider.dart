@@ -114,7 +114,7 @@ class OrderProvider extends BaseProvider {
       String collectMoney,
       String note,
       int productId,
-      String amount,
+      String amount, String amountBox,
       ) async{
     showLoading();
     String paramId = "products[$productId]";
@@ -132,6 +132,7 @@ class OrderProvider extends BaseProvider {
       'advance_money': tamUng,
       'collect_money': thuHo,
       'note': note,
+      'number_box': int.parse(amountBox),
       paramId: int.parse(amount)
     });
 
@@ -153,7 +154,7 @@ class OrderProvider extends BaseProvider {
       String note,
       int productId,
       String amount,
-      int orderId, int status,
+      int orderId, int status, String amountBox,
       ) async{
     showLoading();
     String paramId = "products[$productId]";
@@ -171,6 +172,7 @@ class OrderProvider extends BaseProvider {
       'advance_money': tamUng,
       'collect_money': thuHo,
       'note': note,
+      'number_box': int.parse(amountBox),
       paramId: int.parse(amount)
     });
     _status = status;

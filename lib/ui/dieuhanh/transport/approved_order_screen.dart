@@ -22,6 +22,8 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
   final List<OrderModel> _listOrderChoose = [];
+  bool _isChoose = false;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -67,8 +69,6 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
   }
 
   Widget item(OrderModel orderModel, int index) {
-
-    bool _isChoose = false;
     return InkWell(
       onTap: () => {itemClick(orderModel)},
       child: Padding(
@@ -86,7 +86,7 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                     Checkbox(
                         checkColor: Colors.white,
                         activeColor: MyColor.PRIMARY_COLOR,
-                        value: _isChoose,
+                        value: _listOrderChoose.contains(orderModel) ? true : false,
                         onChanged: (bool? value) {
                           if (value == true) {
                             _listOrderChoose.add(orderModel);
@@ -95,7 +95,7 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                           }
                           setState(() =>
                           {
-                            _isChoose = value!,
+                            _isChoose = _listOrderChoose.contains(orderModel) ? true : false,
                           });
                         }),
                     Text(
@@ -104,9 +104,6 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                     ),
                   ],
                 ),
-                // const SizedBox(
-                //   height: 8,
-                // ),
                 InkWell(
                   onTap: () {
                     launch("tel://${orderModel.phone}");

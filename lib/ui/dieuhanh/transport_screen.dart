@@ -43,6 +43,15 @@ class _TransportScreen extends State<TransportScreen>{
     });
   }
 
+  void _showQRScan() async {
+    ;
+    final result = await Navigator.of(context).pushNamed(Routes.QR_CODE_SCREEN);
+    if (result != null) {
+      Navigator.of(context).pushNamed(Routes.ENTER_PHONE_TRANSPORT_SCREEN,
+              arguments: result);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +67,7 @@ class _TransportScreen extends State<TransportScreen>{
               width: 30,
               child: InkWell(
                 child: const Icon(FontAwesomeIcons.qrcode),
-                onTap: () => {Navigator.of(context).pushNamed(Routes.QR_CODE_SCREEN)},
+                onTap: () => {_showQRScan()},
               ),
             ),
           )
@@ -72,11 +81,11 @@ class _TransportScreen extends State<TransportScreen>{
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.hourglassEnd),
-            label: 'Đơn chờ vận chuyển',
+            label: 'Đơn chưa gửi',
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.truckFast),
-            label: 'Đơn đang vận chuyển',
+            label: 'Đơn đã gửi',
           ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.house),

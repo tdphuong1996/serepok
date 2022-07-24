@@ -35,6 +35,7 @@ class _SaleScreenState extends State<SaleScreen> {
         moneyType: 0,
         advanceMoney: 0,
         collectMoney: 0,
+        numberBox: 0,
         note: "",
         createdAt: "",
         updatedAt: "",
