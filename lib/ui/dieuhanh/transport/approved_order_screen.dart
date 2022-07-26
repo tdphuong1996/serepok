@@ -33,7 +33,6 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     _orderProvider.context = context;
     _controller = ScrollController();
     _controller.addListener(_loadMore);
-    _orderProvider.getListOrderApproved();
   }
 
   @override

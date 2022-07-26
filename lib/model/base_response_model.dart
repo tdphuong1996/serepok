@@ -4,6 +4,7 @@ import 'package:serepok/model/order_model.dart';
 import 'package:serepok/model/paging_respone_model.dart';
 import 'package:serepok/model/staff.dart';
 
+import 'address_model.dart';
 import 'product_model.dart';
 import 'user.dart';
 
@@ -29,7 +30,6 @@ class BaseResponseModel<T> {
 
   static T _dataFromJson<T>(Object json) {
     if (json is Map<String, dynamic>) {
-
       if (T == User) {
         return User.fromJson(json) as T;
       } else if (T == PagingResponseModel<StaffModel>) {
@@ -50,6 +50,29 @@ class BaseResponseModel<T> {
       }
       else if (T == CreateModel) {
         return CreateModel.fromJson(json) as T;
+      }
+    }else if (json is List){
+      if (T == List<CreateModel>) {
+      List<CreateModel> list = [];
+      return list as T;
+      }
+      else if (T == List<ProvinceModel>) {
+        List<ProvinceModel> list = List.from(json)
+            .map((item) => ProvinceModel.fromJson(item))
+            .toList();
+        return list as T;
+      }
+      else if (T == List<DistrictModel>) {
+        List<DistrictModel> list = List.from(json)
+            .map((item) => DistrictModel.fromJson(item))
+            .toList();
+        return list as T;
+      }
+      else if (T == List<WardModel>) {
+        List<WardModel> list = List.from(json)
+            .map((item) => WardModel.fromJson(item))
+            .toList();
+        return list as T;
       }
     }
 

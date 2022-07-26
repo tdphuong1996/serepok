@@ -32,6 +32,9 @@ class PagingResponseModel<T> {
       }else if(T == OrderModel) {
         return List.from(json.map((e) => OrderModel.fromJson(e)).toList());
       }
+      else if(T == CreateModel) {
+        return List.from(json.map((e) => CreateModel.fromJson(e)).toList());
+      }
     }
 
     throw ArgumentError.value(

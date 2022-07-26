@@ -25,6 +25,7 @@ class OrderModel {
   int advanceMoney;
   int collectMoney;
   int numberBox;
+  int? provinceId;
   String? note;
   String createdAt;
   String updatedAt;
@@ -46,6 +47,7 @@ class OrderModel {
     required this.advanceMoney,
     required this.collectMoney,
     required this.numberBox,
+    required this.provinceId,
     required this.note,
     required this.createdAt,
     required this.updatedAt,
@@ -70,6 +72,7 @@ class OrderModel {
         advanceMoney: json['advance_money'],
         collectMoney: json['collect_money'],
         numberBox: json['number_box'],
+        provinceId: json['province_id'],
         note: json['note'],
         createdAt: json['created_at'],
         updatedAt: json['updated_at'],

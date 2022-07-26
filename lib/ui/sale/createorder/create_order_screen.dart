@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:serepok/model/address_model.dart';
 import 'package:serepok/model/order_model.dart';
 import 'package:serepok/model/product_model.dart';
 import 'package:serepok/ui/sale/createorder/order_provider.dart';
@@ -30,6 +31,7 @@ class CreateOrderScreen extends StatefulWidget {
 
 class _CreateOrderScreenState extends State<CreateOrderScreen> {
   late OrderProvider _orderProvider;
+  late ScrollController _controller;
   final TextEditingController _editingFullNameController =
       TextEditingController();
   final TextEditingController _editingPhoneNumberController =
@@ -47,7 +49,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   final TextEditingController _editingProductAmountController =
       TextEditingController();
   final TextEditingController _editingProductBoxController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _editingProductPriceController =
       TextEditingController();
   final TextEditingController _editingProductTotalMoneyController =
@@ -56,11 +58,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   final TextEditingController _editingTamUngController =
       TextEditingController();
   final TextEditingController _editingThuHoController = TextEditingController();
+  final _editingProvinceController = TextEditingController();
   TypeAction _typeAction = TypeAction.ADD;
   TypePay _typePay = TypePay.PAID;
   bool _isEditCOD = false;
   int _productId = 0;
   int _orderId = 0;
+  int _selectedProdvince = 0;
   Status? _status;
 
   @override
@@ -69,7 +73,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     try {
       _orderProvider = Provider.of<OrderProvider>(context, listen: false);
       _orderProvider.context = context;
-      _orderProvider.createOrderSuccessCallback = resetData;
+      _orderProvider.createOrderSuccessCallback = () {
+        resetData();
+        _orderProvider.isRefresh = true;
+        _orderProvider.pageNumber = 1;
+        _orderProvider.getListOrderPending();
+        _orderProvider.getListOrderApproved();
+      };
       _orderProvider.updateOrderSuccessCallback = () {
         Navigator.pop(context, "update_order_success");
       };
@@ -82,6 +92,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       if (_typeAction == TypeAction.EDIT) {
         setDefaultData();
       }
+      _orderProvider.getListProvince();
+      _controller = ScrollController();
     } on Exception catch (error) {
       debugPrint('loi neeeeeee: $error');
     }
@@ -146,6 +158,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         height(),
         textField("Địa chỉ", _editingAddressController),
         height(),
+        textAddressFieldTap("Tỉnh/ Thành phố"),
+        height(),
         textFieldTap("Tên hàng", true),
         height(),
         viewChungLoaiDVT(),
@@ -174,6 +188,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         textField("Số điện thoại", _editingPhoneNumberController),
         height(),
         textField("Địa chỉ", _editingAddressController),
+        height(),
+        textAddressFieldTap("Tỉnh/ Thành phố"),
         height(),
         textFieldTap("Tên hàng", true),
         height(),
@@ -292,9 +308,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       onChanged: (text) => {
         isCalculate == true
             ? _editingProductTotalMoneyController.text =
-            (int.parse(_editingProductAmountController.text) *
-                int.parse(_editingProductPriceController.text))
-                .toString()
+                (int.parse(_editingProductAmountController.text) *
+                        int.parse(_editingProductPriceController.text))
+                    .toString()
             : {}
       },
     );
@@ -355,6 +371,39 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         });
   }
 
+  void pickProvinceOrDistrictOrWard() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ListView.builder(
+              controller: _controller,
+              itemCount: _orderProvider.listProvice.length,
+              itemBuilder: (BuildContext context, int index) {
+                return item(_orderProvider.listProvice[index]);
+              },
+            ),
+          );
+        });
+  }
+
+  Widget item(ProvinceModel provinceModel) {
+    return InkWell(
+      onTap: () => {
+        _editingProvinceController.text = provinceModel.name,
+        _selectedProdvince = provinceModel.id,
+        Navigator.pop(context),
+      },
+      child: Center(
+        child: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(provinceModel.name, style: const TextStyle(fontSize: 16)),
+                ),
+      ),
+    );
+  }
+
   Widget textFieldTap(String label, bool isProduct) {
     return InkWell(
       onTap: () => {
@@ -368,6 +417,22 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
           controller: isProduct == true
               ? _editingProductNameController
               : _editingStatusController,
+        ),
+      ),
+    );
+  }
+
+  Widget textAddressFieldTap(String label) {
+    return InkWell(
+      onTap: () => {
+        pickProvinceOrDistrictOrWard(),
+      },
+      child: IgnorePointer(
+        child: TextFormField(
+          decoration: InputDecoration(
+              labelText: label,
+              suffixIcon: const Icon(FontAwesomeIcons.angleDown)),
+          controller: _editingProvinceController,
         ),
       ),
     );
@@ -496,9 +561,9 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     String amount = _editingProductAmountController.text;
     String amountBox = _editingProductBoxController.text;
     int status = 0;
-    if (_status == Status.CONFIRM){
+    if (_status == Status.CONFIRM) {
       status = 1;
-    }else{
+    } else {
       status = 4;
     }
 
@@ -507,8 +572,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         if (name.isEmpty ||
             phone.isEmpty ||
             address.isEmpty ||
-            amount.isEmpty || status == 0) {
-          _orderProvider.showAlert('Vui lòng nhập đầy đủ thông tin!');
+            amount.isEmpty ||
+            status == 0 ||
+            _selectedProdvince == 0) {
+          _orderProvider.showAlert('Vui lòng nhập và chọn đầy đủ thông tin!');
           return;
         } else {
           if (productId == 0) {
@@ -535,8 +602,20 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             }
           }
         }
-        _orderProvider.updateOrder(name, phone, address, moneyType,
-            advanceMoney, collectMoney, note, productId, amount, orderId, status,amountBox);
+        _orderProvider.updateOrder(
+            name,
+            phone,
+            address,
+            moneyType,
+            advanceMoney,
+            collectMoney,
+            note,
+            productId,
+            amount,
+            orderId,
+            status,
+            amountBox,
+            _selectedProdvince);
         break;
       case TypeAction.ADD:
         if (name.isEmpty ||
@@ -570,8 +649,18 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
             }
           }
         }
-        _orderProvider.createOrder(name, phone, address, moneyType,
-            advanceMoney, collectMoney, note, productId, amount,amountBox);
+        _orderProvider.createOrder(
+            name,
+            phone,
+            address,
+            moneyType,
+            advanceMoney,
+            collectMoney,
+            note,
+            productId,
+            amount,
+            amountBox,
+            _selectedProdvince);
         break;
     }
   }
@@ -594,6 +683,13 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingNoteController.text = order.note!;
     } else {
       _editingNoteController.text = "";
+    }
+    for (var province in _orderProvider.listProvice) {
+      if (province.id == order.provinceId){
+        _editingProvinceController.text = province.name;
+        _selectedProdvince = province.id;
+        break;
+      }
     }
     _editingProductTotalMoneyController.text =
         (int.parse(_editingProductAmountController.text) *
@@ -627,10 +723,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingProductAmountController,
       _editingProductPriceController,
       _editingProductTotalMoneyController,
-      _editingProductBoxController
+      _editingProductBoxController,
+      _editingProvinceController
     ];
     for (var element in controllers) {
       element.text = "";
     }
+    _selectedProdvince = 0;
   }
 }
