@@ -73,12 +73,14 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     try {
       _orderProvider = Provider.of<OrderProvider>(context, listen: false);
       _orderProvider.context = context;
-      _orderProvider.createOrderSuccessCallback = () {
-        resetData();
+      _orderProvider.createOrderSuccessCallback = () async {
         _orderProvider.isRefresh = true;
         _orderProvider.pageNumber = 1;
-        _orderProvider.getListOrderPending();
-        _orderProvider.getListOrderApproved();
+        await _orderProvider.getListOrderPending();
+        _orderProvider.isRefresh = true;
+        _orderProvider.pageNumber = 1;
+        await _orderProvider.getListOrderApproved();
+        resetData();
       };
       _orderProvider.updateOrderSuccessCallback = () {
         Navigator.pop(context, "update_order_success");
@@ -563,7 +565,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
     int status = 0;
     if (_status == Status.CONFIRM) {
       status = 1;
-    } else {
+    } else if (_status == Status.CANCEL) {
       status = 4;
     }
 
@@ -683,6 +685,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       _editingNoteController.text = order.note!;
     } else {
       _editingNoteController.text = "";
+    }
+    if (order.status == 1){
+      _status = Status.CONFIRM;
+      _editingStatusController.text = "Duyệt đơn";
     }
     for (var province in _orderProvider.listProvice) {
       if (province.id == order.provinceId){

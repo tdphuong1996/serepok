@@ -37,55 +37,52 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<OrderProvider>(builder: (context, value, child) {
-      return Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CupertinoButton(
-                  color: MyColor.PRIMARY_COLOR,
-                  onPressed: () {
-                    if (_listOrderChoose.isEmpty) {
-                      showOkAlertDialog(
-                          context: context,
-                          message:
-                              'Vui lòng chọn ít nhất 1 đơn hàng để đẩy ship!');
-                    } else {_pullShip();}},
-                  borderRadius: const BorderRadius.all(Radius.circular(8)),
-                  padding: const EdgeInsets.only(
-                      top: 8, left: 32, right: 32, bottom: 8),
-                  pressedOpacity: 0.5,
-                  child: const Text('Đẩy ship')),
-            ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView.builder(
-                controller: _controller,
-                itemCount: _orderProvider.listOrderApproved.length,
-                itemBuilder: (context, index) {
-                  return item(_orderProvider.listOrderApproved[index], index);
-                },
-              ),
-            ),
-          ),
-          if (_isLoadMoreRunning == true)
-            const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10),
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: Center(
-                  child: CircularProgressIndicator(),
+    return Consumer<OrderProvider>(
+      builder: (context, value, child) {
+        return Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: ListView.builder(
+                    controller: _controller,
+                    itemCount: _orderProvider.listOrderApproved.length,
+                    itemBuilder: (context, index) {
+                      return item(_orderProvider.listOrderApproved[index], index);
+                    },
+                  ),
                 ),
               ),
-            ),
-        ],
-      );
-    });
+              if (_isLoadMoreRunning == true)
+                const Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (_listOrderChoose.isEmpty) {
+                showOkAlertDialog(
+                    context: context,
+                    message:
+                    'Vui lòng chọn ít nhất 1 đơn hàng để đẩy ship!');
+              } else {
+                _pullShip();
+              }
+            },
+            child: const Icon(FontAwesomeIcons.truckFast,color: MyColor.ICON_COLOR,),
+          ),
+        );
+      },
+    );
   }
 
   Widget item(OrderModel orderModel, int index) {
@@ -185,10 +182,8 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
         Routes.ENTER_PHONE_TRANSPORT_SCREEN,
         arguments: _listOrderChoose);
     if (result != null) {
-      showOkAlertDialog(
-          context: context,
-          message:
-          'Đã đẩy ship thành công!');
+      showOkAlertDialog(context: context, message: 'Đã đẩy ship thành công!');
+      _refresh();
     }
   }
 
