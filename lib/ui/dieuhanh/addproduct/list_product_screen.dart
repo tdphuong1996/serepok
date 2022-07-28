@@ -35,8 +35,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
     _controller = ScrollController();
     _controller.addListener(_loadMore);
     _productProvider.deleteProductSuccessCallback = () {
-      showOkAlertDialog(
-          context: context, message: 'Xoá sản phẩm thành công!');
+      showOkAlertDialog(context: context, message: 'Xoá sản phẩm thành công!');
       _refresh();
     };
     _typeAction = widget._type == "SELECT"
@@ -97,7 +96,7 @@ class _ListProductScreenState extends State<ListProductScreen> {
 
   Widget item(ProductModel product) {
     return InkWell(
-      onTap: () => {},
+      onTap: () => {itemClick(product)},
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Row(
@@ -117,17 +116,25 @@ class _ListProductScreenState extends State<ListProductScreen> {
                 children: [
                   Text(product.name!),
                   const Spacer(), // I just added one line
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: InkWell(
-                        onTap: () => {itemClick(product)},
-                        child: const Icon(Icons.edit,
-                            color: MyColor.PRIMARY_COLOR)),
-                  ),
-                  InkWell(
-                      onTap: () => {deleteProduct(product.id, context)},
-                      child: const Icon(Icons.delete,
-                          color: MyColor.PRIMARY_COLOR))
+                  _typeAction == TypeActionList.ADDEDIT
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: InkWell(
+                              onTap: () => {itemClick(product)},
+                              child: const Icon(Icons.edit,
+                                  color: MyColor.PRIMARY_COLOR)),
+                        )
+                      : const SizedBox(
+                          height: 8,
+                        ),
+                  _typeAction == TypeActionList.ADDEDIT
+                      ? InkWell(
+                          onTap: () => {deleteProduct(product.id, context)},
+                          child: const Icon(Icons.delete,
+                              color: MyColor.PRIMARY_COLOR))
+                      : const SizedBox(
+                          height: 8,
+                        ),
                 ],
               ),
             )),

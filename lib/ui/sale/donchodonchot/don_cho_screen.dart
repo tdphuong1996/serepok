@@ -112,8 +112,14 @@ class _DonChoScreenState extends State<DonChoScreen> {
                 const SizedBox(
                   height: 8,
                 ),
-                itemInfo(FontAwesomeIcons.fileInvoice,
-                    orderModel.orderDetails.first.product.name!),
+                Row(
+                  children: [
+                    itemInfo(FontAwesomeIcons.fileInvoice,
+                        orderModel.orderDetails.first.product.name!),
+                    const SizedBox(width: 30),
+                    itemInfo(FontAwesomeIcons.barcode, orderModel.code),
+                  ],
+                ),
                 const SizedBox(
                   height: 8,
                 ),
@@ -140,11 +146,15 @@ class _DonChoScreenState extends State<DonChoScreen> {
   Future<void> _refresh() async {
     _orderProvider.isRefresh = true;
     _orderProvider.pageNumber = 1;
-    if (_orderTypeSetView == OrderType.PENDING){
-      await _orderProvider.getListOrderPending();
-    }else{
-      await _orderProvider.getListOrderApproved();
-    }
+    await _orderProvider.getListOrderPending();
+    _orderProvider.isRefresh = true;
+    _orderProvider.pageNumber = 1;
+    await _orderProvider.getListOrderApproved();
+    // if (_orderTypeSetView == OrderType.PENDING){
+    //   await _orderProvider.getListOrderPending();
+    // }else{
+    //   await _orderProvider.getListOrderApproved();
+    // }
   }
 
   @override

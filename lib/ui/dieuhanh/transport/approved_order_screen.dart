@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../model/order_model.dart';
 import '../../../res/AppThemes.dart';
+import '../../../routes.dart';
 import '../../sale/createorder/order_provider.dart';
 
 class ApprovedOrderScreen extends StatefulWidget {
@@ -22,6 +23,8 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
   final List<OrderModel> _listOrderChoose = [];
+  bool _isChoose = false;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -30,45 +33,59 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     _orderProvider.context = context;
     _controller = ScrollController();
     _controller.addListener(_loadMore);
-    _orderProvider.getListOrderApproved();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<OrderProvider>(builder: (context, value, child) {
-      return Column(
-        children: [
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView.builder(
-                controller: _controller,
-                itemCount: _orderProvider.listOrderApproved.length,
-                itemBuilder: (context, index) {
-                  return item(_orderProvider.listOrderApproved[index], index);
-                },
-              ),
-            ),
-          ),
-          if (_isLoadMoreRunning == true)
-            const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10),
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: Center(
-                  child: CircularProgressIndicator(),
+    return Consumer<OrderProvider>(
+      builder: (context, value, child) {
+        return Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: ListView.builder(
+                    controller: _controller,
+                    itemCount: _orderProvider.listOrderApproved.length,
+                    itemBuilder: (context, index) {
+                      return item(_orderProvider.listOrderApproved[index], index);
+                    },
+                  ),
                 ),
               ),
-            ),
-        ],
-      );
-    });
+              if (_isLoadMoreRunning == true)
+                const Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (_listOrderChoose.isEmpty) {
+                showOkAlertDialog(
+                    context: context,
+                    message:
+                    'Vui lòng chọn ít nhất 1 đơn hàng để đẩy ship!');
+              } else {
+                _pullShip();
+              }
+            },
+            child: const Icon(FontAwesomeIcons.truckFast,color: MyColor.ICON_COLOR,),
+          ),
+        );
+      },
+    );
   }
 
   Widget item(OrderModel orderModel, int index) {
-
-    bool _isChoose = false;
     return InkWell(
       onTap: () => {itemClick(orderModel)},
       child: Padding(
@@ -86,17 +103,21 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                     Checkbox(
                         checkColor: Colors.white,
                         activeColor: MyColor.PRIMARY_COLOR,
-                        value: _isChoose,
+                        value: _listOrderChoose.contains(orderModel)
+                            ? true
+                            : false,
                         onChanged: (bool? value) {
                           if (value == true) {
                             _listOrderChoose.add(orderModel);
                           } else {
                             _listOrderChoose.remove(orderModel);
                           }
-                          setState(() =>
-                          {
-                            _isChoose = value!,
-                          });
+                          setState(() => {
+                                _isChoose =
+                                    _listOrderChoose.contains(orderModel)
+                                        ? true
+                                        : false,
+                              });
                         }),
                     Text(
                       orderModel.code,
@@ -104,9 +125,6 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
                     ),
                   ],
                 ),
-                // const SizedBox(
-                //   height: 8,
-                // ),
                 InkWell(
                   onTap: () {
                     launch("tel://${orderModel.phone}");
@@ -157,6 +175,16 @@ class _ApprovedOrderScreen extends State<ApprovedOrderScreen> {
     _orderProvider.dispose();
     _controller.removeListener(_loadMore);
     super.dispose();
+  }
+
+  void _pullShip() async {
+    final result = await Navigator.of(context).pushNamed(
+        Routes.ENTER_PHONE_TRANSPORT_SCREEN,
+        arguments: _listOrderChoose);
+    if (result != null) {
+      showOkAlertDialog(context: context, message: 'Đã đẩy ship thành công!');
+      _refresh();
+    }
   }
 
   void _loadMore() async {

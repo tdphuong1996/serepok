@@ -40,9 +40,7 @@ class _QRCodeScreen extends State<QRCodeScreen> {
     if (result != null) {
       await controller!.pauseCamera();
       if (kDebugMode) {
-        Navigator.of(context).pushNamed(Routes.ENTER_PHONE_TRANSPORT_SCREEN,
-            arguments: result!.code);
-        // print(result!.code);
+        Navigator.pop(context, result!.code);
       }
       controller!.dispose();
     }

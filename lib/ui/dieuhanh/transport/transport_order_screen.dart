@@ -5,24 +5,28 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../model/address_model.dart';
 import '../../../model/order_model.dart';
 import '../../../res/AppThemes.dart';
 import '../../../routes.dart';
 import '../../sale/createorder/order_provider.dart';
 
-class TransportOrderScreen extends StatefulWidget{
+class TransportOrderScreen extends StatefulWidget {
   const TransportOrderScreen({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _TransportOrderScreen();
 }
 
-class _TransportOrderScreen extends State<TransportOrderScreen>{
-  final TextEditingController _editingDistrictController = TextEditingController();
+class _TransportOrderScreen extends State<TransportOrderScreen> {
+  final TextEditingController _editingDistrictController =
+      TextEditingController();
   late OrderProvider _orderProvider;
   late ScrollController _controller;
+  late ScrollController _controllerOrder;
   bool _isLoadMoreRunning = false;
   bool _isLoading = false;
+  int _provinceIdSelected = 0;
 
   @override
   void initState() {
@@ -30,8 +34,10 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
     _orderProvider = Provider.of<OrderProvider>(context, listen: false);
     _orderProvider.context = context;
     _controller = ScrollController();
-    _controller.addListener(_loadMore);
-    _orderProvider.getListOrderShipping();
+    _controllerOrder = ScrollController();
+    _controllerOrder.addListener(_loadMore);
+    _orderProvider.getListProvince();
+    _orderProvider.getListOrderShipping(_provinceIdSelected);
   }
 
   @override
@@ -39,15 +45,17 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
     return Consumer<OrderProvider>(builder: (context, value, child) {
       return Column(
         children: [
-          textFieldTap("Lọc theo tỉnh", true),
+          Padding(
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+              child: textFieldTap("Lọc theo tỉnh", false)),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _refresh,
               child: ListView.builder(
-                controller: _controller,
+                controller: _controllerOrder,
                 itemCount: _orderProvider.listOrderShipping.length,
                 itemBuilder: (context, index) {
-                  return item(_orderProvider.listOrderShipping[index]);
+                  return itemOrder(_orderProvider.listOrderShipping[index]);
                 },
               ),
             ),
@@ -68,9 +76,9 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
     });
   }
 
-  Widget item(OrderModel orderModel) {
+  Widget itemOrder(OrderModel orderModel) {
     return InkWell(
-      onTap: () => {itemClick(orderModel)},
+      onTap: () => {},
       child: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
         child: Card(
@@ -115,6 +123,24 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
     );
   }
 
+  Widget item(ProvinceModel provinceModel) {
+    return InkWell(
+      onTap: () => {
+        _editingDistrictController.text = provinceModel.name,
+        _provinceIdSelected = provinceModel.id,
+        _orderProvider.isRefresh = true,
+        _orderProvider.getListOrderShipping(_provinceIdSelected),
+        Navigator.pop(context),
+      },
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text(provinceModel.name, style: const TextStyle(fontSize: 16)),
+        ),
+      ),
+    );
+  }
+
   Widget textFieldTap(String label, bool isProduct) {
     return InkWell(
       onTap: () => {pickDistrict()},
@@ -136,59 +162,17 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return Wrap(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    const Center(
-                      child: Text(
-                        "Chọn tỉnh cần lọc",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      height: 1,
-                      width: double.infinity,
-                      color: Colors.grey.shade200,
-                    ),
-                    InkWell(
-                      onTap: () {
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text("Duyệt đơn"),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text("Huỷ đơn"),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+          return Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: ListView.builder(
+              controller: _controller,
+              itemCount: _orderProvider.listProvice.length,
+              itemBuilder: (BuildContext context, int index) {
+                return item(_orderProvider.listProvice[index]);
+              },
+            ),
           );
         });
-  }
-
-  Future<void> itemClick(OrderModel orderModel) async {
-    final result = await Navigator.pushNamed(context, Routes.CREATE_ORDER,
-        arguments: orderModel);
-    if (result != null) {
-      showOkAlertDialog(
-          context: context, message: 'Cập nhật thông tin thành công');
-      _refresh();
-    }
   }
 
   String convertDatetime(String date) {
@@ -201,9 +185,8 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
   Future<void> _refresh() async {
     _orderProvider.isRefresh = true;
     _orderProvider.pageNumber = 1;
-    await _orderProvider.getListOrderShipping();
+    await _orderProvider.getListOrderShipping(_provinceIdSelected);
   }
-
 
   @override
   void dispose() {
@@ -222,7 +205,7 @@ class _TransportOrderScreen extends State<TransportOrderScreen>{
       _isLoading = true;
       _orderProvider.isLoadMore = true;
       _orderProvider.pageNumber++;
-      await _orderProvider.getListOrderShipping();
+      await _orderProvider.getListOrderShipping(_provinceIdSelected);
       _isLoading = false;
       setState(() {
         _isLoadMoreRunning = false;
